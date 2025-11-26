@@ -14,7 +14,13 @@ Para aplicar al puesto deberás hacer la implementación de un proyecto de softw
   - Chat con un modelo de IA
   - Explicación de datos o información
 
-Visita este repositorio si necesitas ideas de proyectos: [Build Your Own X](https://github.com/codecrafters-io/build-your-own-x)
+Recursos para ideas de proyectos:
+
+- [The-Tool-Coders](https://github.com/The-Cool-Coders/Project-Ideas-And-Resources)
+- [florinpop17/app-ideas](https://github.com/florinpop17/app-ideas)
+- [Build Your Own X](https://github.com/codecrafters-io/build-your-own-x)
+- [Roadmap.sh](https://roadmap.sh/)
+- [Awesome Self Hosted](https://github.com/awesome-selfhosted/awesome-selfhosted)
 
 **IMPORTANTE:** Deberás aplicar CONTEXT ENGINEERING para el desarrollo del proyecto. Revisa este recurso para entender de qué se trata:
 
