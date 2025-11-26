@@ -66,9 +66,9 @@ Utilizar al menos uno de los siguientes frameworks y/o runtimes:
 - **LangChain**
 - **Bun**
 - **NodeJS**
-- **UV**
+- **uv**
   
-Puedes utilizar cualquier otro framework que no esté en la lista o incluso que hagas toda la aplicación desde cero, pero tu proyectó deberá ser
+Puedes utilizar cualquier otro framework que no esté en la lista o incluso que hagas toda la aplicación desde cero, pero tu proyecto deberá ser
 lo más robusto y escalable posible.
 
 ## Instalación
