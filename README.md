@@ -54,7 +54,7 @@ Deberás utilizar al menos uno de los siguientes lenguajes de programación:
 
 ### Frameworks
 
-Deberás utilizar al menos uno de los siguientes frameworks:
+Utilizar al menos uno de los siguientes frameworks y/o runtimes:
 
 - **FastAPI**
 - **Django**
@@ -62,6 +62,14 @@ Deberás utilizar al menos uno de los siguientes frameworks:
 - **Hono**
 - **NextJS**
 - **SvelteKit**
+- **PydanticAI**
+- **LangChain**
+- **Bun**
+- **NodeJS**
+- **UV**
+  
+Puedes utilizar cualquier otro framework que no esté en la lista o incluso que hagas toda la aplicación desde cero, pero tu proyectó deberá ser
+lo más robusto y escalable posible.
 
 ## Instalación
 
