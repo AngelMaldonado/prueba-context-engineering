@@ -1,0 +1,331 @@
+{
+  "_comment": "Example conversation flow for CoachX onboarding chat system",
+  "_description": "This file shows the expected structure and flow of the onboarding conversation. Use this as reference for implementing the chat interface and backend logic.",
+  
+  "conversation_flow": [
+    {
+      "step": 1,
+      "role": "assistant",
+      "message": "¡Hola! Soy CoachX, tu entrenador personal con inteligencia artificial. 💪 Estoy aquí para crear un plan de entrenamiento personalizado para ti. ¿Cuál es tu nombre?",
+      "expects": "string",
+      "validation": {
+        "min_length": 2,
+        "max_length": 50,
+        "required": true
+      }
+    },
+    {
+      "step": 2,
+      "role": "user",
+      "message": "Me llamo Alex",
+      "stored_as": "name"
+    },
+    {
+      "step": 3,
+      "role": "assistant",
+      "message": "¡Encantado de conocerte, Alex! 🤝 Para crear tu plan perfecto, necesito conocerte mejor. ¿Cuántos años tienes?",
+      "expects": "integer",
+      "validation": {
+        "min": 1,
+        "max": 120,
+        "required": true,
+        "error_message": "Por favor ingresa una edad válida entre 1 y 120 años"
+      }
+    },
+    {
+      "step": 4,
+      "role": "user",
+      "message": "28",
+      "stored_as": "age"
+    },
+    {
+      "step": 5,
+      "role": "assistant",
+      "message": "Perfecto, Alex. ¿Qué deporte practicas o te gustaría practicar? Puedo ayudarte con: Box 🥊, CrossFit 🏋️, Gym 💪, Calistenia 🤸, o Running 🏃",
+      "expects": "enum",
+      "validation": {
+        "allowed_values": ["boxing", "box", "crossfit", "gym", "gimnasio", "calisthenics", "calistenia", "running", "correr"],
+        "normalize_to": {
+          "box": "boxing",
+          "gimnasio": "gym",
+          "calistenia": "calisthenics",
+          "correr": "running"
+        },
+        "required": true,
+        "error_message": "Por favor selecciona uno de los deportes disponibles"
+      }
+    },
+    {
+      "step": 6,
+      "role": "user",
+      "message": "Box",
+      "stored_as": "sport",
+      "normalized_value": "boxing"
+    },
+    {
+      "step": 7,
+      "role": "assistant",
+      "message": "¡Excelente elección! El box es un deporte increíble. 🥊 ¿Cuál es tu nivel de experiencia? (principiante, intermedio, avanzado)",
+      "expects": "enum",
+      "validation": {
+        "allowed_values": ["beginner", "principiante", "novato", "intermediate", "intermedio", "advanced", "avanzado", "experto"],
+        "normalize_to": {
+          "principiante": "beginner",
+          "novato": "beginner",
+          "intermedio": "intermediate",
+          "avanzado": "advanced",
+          "experto": "advanced"
+        },
+        "required": true
+      }
+    },
+    {
+      "step": 8,
+      "role": "user",
+      "message": "intermedio",
+      "stored_as": "experience_level",
+      "normalized_value": "intermediate"
+    },
+    {
+      "step": 9,
+      "role": "assistant",
+      "message": "Genial, con tu nivel intermedio podemos crear un plan más desafiante. ¿Cuántos días por semana puedes entrenar? (1-7 días)",
+      "expects": "integer",
+      "validation": {
+        "min": 1,
+        "max": 7,
+        "required": true,
+        "error_message": "Ingresa un número entre 1 y 7"
+      }
+    },
+    {
+      "step": 10,
+      "role": "user",
+      "message": "4",
+      "stored_as": "days_per_week"
+    },
+    {
+      "step": 11,
+      "role": "assistant",
+      "message": "Perfecto, 4 días a la semana es excelente para progresar. ¿Cuál es tu peso actual en kilogramos? (Opcional, puedes omitir escribiendo 'omitir')",
+      "expects": "float_or_skip",
+      "validation": {
+        "min": 30,
+        "max": 300,
+        "required": false,
+        "allow_skip": true,
+        "skip_keywords": ["omitir", "skip", "no", "ninguno", "paso"]
+      }
+    },
+    {
+      "step": 12,
+      "role": "user",
+      "message": "75",
+      "stored_as": "weight_kg"
+    },
+    {
+      "step": 13,
+      "role": "assistant",
+      "message": "¿Tu altura en centímetros? (Opcional)",
+      "expects": "float_or_skip",
+      "validation": {
+        "min": 100,
+        "max": 250,
+        "required": false,
+        "allow_skip": true
+      }
+    },
+    {
+      "step": 14,
+      "role": "user",
+      "message": "180",
+      "stored_as": "height_cm"
+    },
+    {
+      "step": 15,
+      "role": "assistant",
+      "message": "¡Casi listo! ¿Cuáles son tus objetivos principales? Por ejemplo: mejorar técnica, aumentar resistencia, perder peso, ganar músculo... (Máximo 200 caracteres)",
+      "expects": "string",
+      "validation": {
+        "max_length": 200,
+        "required": true
+      }
+    },
+    {
+      "step": 16,
+      "role": "user",
+      "message": "Mejorar mi técnica de golpes y aumentar mi resistencia cardiovascular",
+      "stored_as": "goals"
+    },
+    {
+      "step": 17,
+      "role": "assistant",
+      "message": "Una última pregunta: ¿Tienes alguna lesión o limitación que deba considerar? (Opcional, escribe 'ninguna' si no aplica)",
+      "expects": "string_or_skip",
+      "validation": {
+        "max_length": 500,
+        "required": false,
+        "allow_skip": true,
+        "skip_keywords": ["ninguna", "no", "none", "nada", "omitir"]
+      }
+    },
+    {
+      "step": 18,
+      "role": "user",
+      "message": "Tuve una lesión en el hombro derecho hace 6 meses, ya está recuperado pero prefiero no forzarlo",
+      "stored_as": "limitations"
+    },
+    {
+      "step": 19,
+      "role": "assistant",
+      "message": "¡Perfecto, Alex! 🎉 Tengo toda la información que necesito. Voy a crear tu plan personalizado de box considerando tu nivel intermedio, tus objetivos de técnica y resistencia, y tu historial de lesión en el hombro. Esto tomará solo unos segundos...",
+      "action": "generate_plan",
+      "final_step": true
+    },
+    {
+      "step": 20,
+      "role": "assistant",
+      "message": "¡Tu plan está listo! 🥊 He creado un programa de 4 semanas con 4 entrenamientos semanales que te ayudarán a mejorar tu técnica y resistencia, siendo cuidadoso con tu hombro. ¿Quieres verlo?",
+      "action": "show_plan"
+    }
+  ],
+  
+  "collected_data_structure": {
+    "name": "Alex",
+    "age": 28,
+    "sport": "boxing",
+    "experience_level": "intermediate",
+    "days_per_week": 4,
+    "weight_kg": 75.0,
+    "height_cm": 180.0,
+    "goals": "Mejorar mi técnica de golpes y aumentar mi resistencia cardiovascular",
+    "limitations": "Tuve una lesión en el hombro derecho hace 6 meses, ya está recuperado pero prefiero no forzarlo"
+  },
+  
+  "conversation_states": {
+    "not_started": {
+      "description": "User hasn't started onboarding yet",
+      "next_action": "Show welcome message and start"
+    },
+    "in_progress": {
+      "description": "User is currently answering questions",
+      "current_step": "integer (1-18)",
+      "next_action": "Ask next question or validate answer"
+    },
+    "completed": {
+      "description": "All questions answered, generating plan",
+      "next_action": "Generate workout plan with AI"
+    },
+    "plan_ready": {
+      "description": "Plan has been generated",
+      "next_action": "Show plan to user"
+    }
+  },
+  
+  "validation_patterns": {
+    "name": {
+      "type": "string",
+      "min_length": 2,
+      "max_length": 50,
+      "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$",
+      "error": "El nombre debe tener entre 2 y 50 caracteres y solo contener letras"
+    },
+    "age": {
+      "type": "integer",
+      "min": 1,
+      "max": 120,
+      "error": "La edad debe estar entre 1 y 120 años"
+    },
+    "sport": {
+      "type": "enum",
+      "allowed": ["boxing", "crossfit", "gym", "calisthenics", "running"],
+      "error": "Por favor selecciona un deporte válido"
+    },
+    "experience_level": {
+      "type": "enum",
+      "allowed": ["beginner", "intermediate", "advanced"],
+      "error": "El nivel debe ser: principiante, intermedio o avanzado"
+    },
+    "days_per_week": {
+      "type": "integer",
+      "min": 1,
+      "max": 7,
+      "error": "Los días deben estar entre 1 y 7"
+    },
+    "weight_kg": {
+      "type": "float",
+      "min": 30,
+      "max": 300,
+      "optional": true,
+      "error": "El peso debe estar entre 30 y 300 kg"
+    },
+    "height_cm": {
+      "type": "float",
+      "min": 100,
+      "max": 250,
+      "optional": true,
+      "error": "La altura debe estar entre 100 y 250 cm"
+    },
+    "goals": {
+      "type": "string",
+      "max_length": 200,
+      "error": "Los objetivos no pueden exceder 200 caracteres"
+    },
+    "limitations": {
+      "type": "string",
+      "max_length": 500,
+      "optional": true,
+      "error": "Las limitaciones no pueden exceder 500 caracteres"
+    }
+  },
+  
+  "ui_considerations": {
+    "progress_indicator": "Mostrar 'Pregunta X de 8' o barra de progreso",
+    "back_button": "Permitir volver a la pregunta anterior",
+    "loading_states": "Mostrar spinner cuando AI está procesando",
+    "error_handling": "Mostrar errores de validación de forma amigable",
+    "mobile_responsive": "Optimizar para pantallas pequeñas",
+    "theme": "Bred (Black + Red) theme throughout",
+    "animations": "Suaves transiciones entre preguntas",
+    "auto_focus": "Focus automático en input de respuesta"
+  },
+  
+  "backend_implementation": {
+    "endpoints": [
+      "POST /api/onboarding/start - Iniciar onboarding, devolver primera pregunta",
+      "POST /api/onboarding/answer - Enviar respuesta, recibir siguiente pregunta",
+      "GET /api/onboarding/status/{user_id} - Obtener estado actual",
+      "POST /api/onboarding/back - Volver a pregunta anterior",
+      "POST /api/onboarding/complete - Finalizar y guardar datos"
+    ],
+    "response_format": {
+      "success": true,
+      "step": 3,
+      "total_steps": 8,
+      "question": "¿Cuántos años tienes?",
+      "expects": "integer",
+      "validation": {},
+      "can_go_back": true,
+      "is_final": false
+    },
+    "error_format": {
+      "success": false,
+      "error": "Validation failed",
+      "message": "La edad debe estar entre 1 y 120 años",
+      "field": "age"
+    }
+  },
+  
+  "notes_for_implementation": [
+    "Use this exact flow for consistent user experience",
+    "Validate ALL user inputs before accepting",
+    "Store partial progress so users can resume if they leave",
+    "Use friendly, motivational language like the examples",
+    "Handle typos and variations (box vs boxing, etc.)",
+    "Provide clear error messages when validation fails",
+    "Show progress so users know how many questions remain",
+    "Allow going back to correct previous answers",
+    "Add loading states when calling AI for plan generation",
+    "Consider rate limiting to prevent abuse"
+  ]
+}
