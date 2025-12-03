@@ -55,6 +55,7 @@ async def startup_event() -> None:
     # Import MVP models to register them with SQLAlchemy before creating tables
     from app.models.user import MVPUser  # noqa: F401
     from app.models.user_profile import MVPUserProfile  # noqa: F401
+    from app.models.workout_plan import MVPWorkoutPlan  # noqa: F401
 
     create_tables()
 
@@ -230,12 +231,12 @@ async def ai_chat(
 
 
 # Include API routers
-from app.api import profile
+from app.api import profile, workout
 app.include_router(profile.router)
+app.include_router(workout.router)
 
 # Future routers:
-# from app.api import training, chat
-# app.include_router(training.router)
+# from app.api import chat
 # app.include_router(chat.router)
 
 
