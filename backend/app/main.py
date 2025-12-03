@@ -13,6 +13,7 @@ import logging
 from app.config import settings
 from app.database.connection import create_tables
 from app.ai.rag import load_knowledge_base, get_collection_stats, query_knowledge
+from app.ai.gemini import generate_with_rag, test_gemini_connection, GeminiAuthenticationError
 
 # Setup logging
 logging.basicConfig(
@@ -130,6 +131,76 @@ async def rag_query(q: str, sport: Optional[str] = None, top_k: int = 3) -> dict
         "results_count": len(results),
         "results": results
     }
+
+
+@app.get("/ai/test")
+async def ai_test() -> dict:
+    """
+    Test Gemini API connection.
+
+    Returns:
+        Connection test results
+    """
+    return test_gemini_connection()
+
+
+@app.get("/ai/chat")
+async def ai_chat(
+    q: str,
+    sport: Optional[str] = None,
+    top_k: int = 3
+) -> dict:
+    """
+    AI chat endpoint with RAG context.
+
+    Combines RAG retrieval with Gemini generation to provide
+    context-aware, personalized training advice.
+
+    Args:
+        q: User's question
+        sport: Optional sport filter (boxing, crossfit, gym)
+        top_k: Number of RAG context chunks (default: 3)
+
+    Returns:
+        AI-generated response with metadata
+
+    Example:
+        GET /ai/chat?q=how+to+improve+jab&sport=boxing
+    """
+    from fastapi import HTTPException, status
+
+    try:
+        if not q or len(q.strip()) == 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Query parameter 'q' is required"
+            )
+
+        logger.info(f"Chat request: q='{q[:50]}...', sport={sport}")
+
+        response_text = generate_with_rag(query=q, sport=sport, top_k=top_k)
+
+        return {
+            "query": q,
+            "sport": sport,
+            "response": response_text,
+            "status": "success"
+        }
+
+    except GeminiAuthenticationError as e:
+        logger.error(f"Gemini authentication error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="AI service not configured. Please check GEMINI_API_KEY."
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in chat endpoint: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate response: {str(e)}"
+        )
 
 
 # Future: Include API routers here
