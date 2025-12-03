@@ -34,6 +34,10 @@ class Settings(BaseSettings):
     CORS_ALLOW_METHODS: List[str] = ["*"]
     CORS_ALLOW_HEADERS: List[str] = ["*"]
 
+    # AI - Google Gemini
+    GEMINI_API_KEY: str = ""
+    GEMINI_MODEL: str = "models/gemini-2.5-flash"
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
