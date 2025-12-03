@@ -141,22 +141,24 @@ def generate_response(prompt: str, **kwargs) -> str:
 def generate_with_rag(
     query: str,
     sport: Optional[str] = None,
-    top_k: int = 3
+    top_k: int = 3,
+    user_context: Optional[str] = None
 ) -> str:
     """
-    Generate AI response enhanced with RAG context.
+    Generate AI response enhanced with RAG context and user personalization.
 
     Queries the RAG system for relevant context, formats it into a prompt,
     and generates a response using Gemini that combines the context with
-    LLM reasoning.
+    LLM reasoning and user profile information.
 
     Args:
         query: User's question or request
         sport: Optional sport filter (boxing, crossfit, gym, etc.)
         top_k: Number of RAG context chunks to retrieve (default: 3)
+        user_context: Optional user profile context for personalization
 
     Returns:
-        AI-generated response incorporating RAG context
+        AI-generated response incorporating RAG context and user profile
 
     Raises:
         GeminiGenerationError: If generation fails
@@ -165,7 +167,8 @@ def generate_with_rag(
         >>> response = generate_with_rag(
         ...     query="How do I improve my jab?",
         ...     sport="boxing",
-        ...     top_k=3
+        ...     top_k=3,
+        ...     user_context="Age: 28, Experience: intermediate..."
         ... )
         >>> print(response)
     """
@@ -181,7 +184,13 @@ def generate_with_rag(
         # Step 2: Build prompt with context
         sport_context = f" specializing in {sport}" if sport else ""
 
+        # Step 3: Add user personalization context if available
+        user_section = ""
+        if user_context:
+            user_section = f"\n\n{user_context}\n\nIMPORTANT: Use the user profile information above to personalize your response. Consider their experience level, goals, limitations, and available resources when giving advice."
+
         prompt = f"""You are CoachX, an expert personal training assistant{sport_context}.
+{user_section}
 
 IMPORTANT RULES:
 1. You ONLY answer questions related to fitness, training, sports, exercise, nutrition, and athletic performance.
