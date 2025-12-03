@@ -9,9 +9,11 @@
 ## 1. Overview
 
 ### What We're Building
+
 A complete RAG system using ChromaDB to retrieve relevant information from the sports knowledge base (boxing, crossfit, gym) to provide context for AI-generated workout plans and chat responses.
 
 ### Architecture
+
 ```
 knowledge_base/           ← Source documents
     ├── boxing/
@@ -32,12 +34,14 @@ app/ai/rag.py            ← RAG module
 ```
 
 ### Why This Feature Matters
+
 - Provides factual, sport-specific knowledge to AI
 - Improves accuracy of workout plans
 - Enables citation of sources
 - No external API calls needed (all local)
 
 ### Success Criteria
+
 - ✅ ChromaDB collection "coachx_knowledge" created
 - ✅ All knowledge base documents loaded and embedded
 - ✅ Can query "boxing jab technique" → returns relevant chunks
@@ -55,6 +59,7 @@ app/ai/rag.py            ← RAG module
 **File:** `backend/requirements.txt`
 
 Add RAG dependencies:
+
 ```txt
 chromadb==0.4.18
 langchain==0.0.350
@@ -62,6 +67,7 @@ sentence-transformers==2.2.2
 ```
 
 **Install:**
+
 ```bash
 cd backend
 source venv/bin/activate
@@ -71,6 +77,7 @@ pip install chromadb==0.4.18 langchain==0.0.350 sentence-transformers==2.2.2
 **Note:** First install will download the embedding model (~90MB), takes 1-2 minutes.
 
 **Validate:**
+
 ```bash
 python -c "import chromadb; print('✅ ChromaDB OK')"
 python -c "from langchain.text_splitter import RecursiveCharacterTextSplitter; print('✅ LangChain OK')"
@@ -88,6 +95,7 @@ touch backend/app/ai/rag.py
 ```
 
 **Validate:**
+
 ```bash
 tree backend/app/ai/
 # Should show __init__.py and rag.py
@@ -123,6 +131,7 @@ chroma_db/
 ```
 
 **Validate:**
+
 ```bash
 cat backend/.gitignore
 ```
@@ -417,6 +426,7 @@ def get_collection_stats() -> Dict:
 ```
 
 **Validate:**
+
 ```bash
 python -c "from app.ai.rag import get_chroma_client; print('✅ RAG module OK')"
 ```
@@ -459,6 +469,7 @@ async def startup_event() -> None:
 ```
 
 **Validate:**
+
 ```bash
 python -c "from app.main import app; print('✅ Main updated OK')"
 ```
@@ -510,6 +521,7 @@ async def rag_query(q: str, sport: Optional[str] = None, top_k: int = 3) -> dict
 ### Step 7: Start Server and Load Knowledge Base
 
 **Commands:**
+
 ```bash
 cd backend
 source venv/bin/activate
@@ -517,6 +529,7 @@ python -m app.main
 ```
 
 **Expected Output:**
+
 ```
 INFO: 🚀 Starting CoachX API...
 INFO: Creating database tables...
@@ -550,11 +563,13 @@ INFO: Uvicorn running on http://0.0.0.0:8000
 ### Step 8: Test RAG System
 
 **Test 1: Check Stats**
+
 ```bash
 curl http://localhost:8000/rag/stats
 ```
 
 **Expected:**
+
 ```json
 {
   "collection_name": "coachx_knowledge",
@@ -566,11 +581,13 @@ curl http://localhost:8000/rag/stats
 ```
 
 **Test 2: Query Boxing**
+
 ```bash
 curl "http://localhost:8000/rag/query?q=boxing%20jab%20technique&sport=boxing&top_k=2"
 ```
 
 **Expected:**
+
 ```json
 {
   "query": "boxing jab technique",
@@ -592,11 +609,13 @@ curl "http://localhost:8000/rag/query?q=boxing%20jab%20technique&sport=boxing&to
 ```
 
 **Test 3: Query CrossFit**
+
 ```bash
 curl "http://localhost:8000/rag/query?q=warmup%20exercises&sport=crossfit"
 ```
 
 **Test 4: Persistence**
+
 - Stop server (Ctrl+C)
 - Start again: `python -m app.main`
 - Query again - should work instantly (no reload)
@@ -643,6 +662,7 @@ print("\n✅ All RAG tests passed!")
 ```
 
 **Run:**
+
 ```bash
 python test_rag.py
 ```
@@ -676,6 +696,7 @@ cat backend/requirements.txt | grep -E "chromadb|langchain|sentence"
 ```
 
 Should show:
+
 ```
 chromadb==0.4.18
 langchain==0.0.350
@@ -687,6 +708,7 @@ sentence-transformers==2.2.2
 ### Step 12: Final Validation
 
 **Checklist:**
+
 - [ ] ChromaDB client initializes without errors
 - [ ] Knowledge base loads on startup
 - [ ] `/rag/stats` returns document count > 0
@@ -707,6 +729,7 @@ sentence-transformers==2.2.2
 From CLAUDE.md:
 
 **✅ Required:**
+
 - Type hints on all functions
 - Google-style docstrings
 - Functions under 50 lines
@@ -715,6 +738,7 @@ From CLAUDE.md:
 - No hardcoded paths (use constants)
 
 **✅ RAG-Specific:**
+
 - Singleton pattern for clients
 - Graceful degradation if RAG fails
 - Metadata preservation
@@ -769,6 +793,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ## 6. Next Steps
 
 After completing:
+
 1. ✅ Test all endpoints work
 2. ✅ Verify persistence
 3. ✅ Commit changes
