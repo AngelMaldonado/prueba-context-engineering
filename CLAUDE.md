@@ -9,12 +9,13 @@ This file provides comprehensive guidance to Claude Code when working on CoachX,
 **Tech Stack:**
 
 - **Backend:** FastAPI 0.104+ (Python)
-- **Frontend:** Next.js 14 (TypeScript/React)
+- **Frontend:** Vite 5+ + React 18 + TypeScript
 - **Database:** SQLite with SQLAlchemy 2.0+
 - **AI Framework:** LangChain 0.1+
 - **Vector DB:** ChromaDB (local, persistent)
 - **LLM:** Google Gemini Flash (free tier)
 - **Embeddings:** sentence-transformers (local, free)
+- **Styling:** Tailwind CSS 3+
 
 **Key Features:**
 
@@ -94,16 +95,16 @@ coachx/
 │   ├── .env.example
 │   └── pytest.ini
 │
-├── frontend/
+├── frontend/                     # Vite + React + TypeScript
 │   ├── src/
-│   │   ├── app/
-│   │   │   ├── page.tsx           # Home page
-│   │   │   ├── onboarding/
-│   │   │   │   └── page.tsx       # Onboarding flow
-│   │   │   ├── plan/
-│   │   │   │   └── page.tsx       # Training plan view
-│   │   │   └── chat/
-│   │   │       └── page.tsx       # Chat interface
+│   │   ├── main.tsx              # Entry point
+│   │   ├── App.tsx               # Root component
+│   │   ├── pages/
+│   │   │   ├── HomePage.tsx          # Landing page
+│   │   │   ├── OnboardingPage.tsx    # Onboarding flow
+│   │   │   ├── DashboardPage.tsx     # Main dashboard
+│   │   │   ├── WorkoutPlanPage.tsx   # Training plan view
+│   │   │   └── ChatPage.tsx          # Chat interface
 │   │   ├── components/
 │   │   │   ├── chat/
 │   │   │   │   ├── ChatMessage.tsx
