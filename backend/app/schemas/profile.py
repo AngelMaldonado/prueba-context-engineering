@@ -14,6 +14,9 @@ class OnboardingRequest(BaseModel):
     All fields are optional to allow progressive form filling.
     """
 
+    # User Information
+    full_name: Optional[str] = Field(None, min_length=2, max_length=255, description="User's full name")
+
     # Personal Information
     age: Optional[int] = Field(None, ge=13, le=120, description="User age in years")
     gender: Optional[str] = Field(None, description="Gender: male, female, other, prefer_not_to_say")

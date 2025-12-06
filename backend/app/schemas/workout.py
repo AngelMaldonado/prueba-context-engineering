@@ -62,13 +62,13 @@ class WorkoutDay(BaseModel):
 class WorkoutPlanRequest(BaseModel):
     """Schema for requesting a new workout plan generation."""
 
-    duration_weeks: int = Field(default=4, ge=1, le=12, description="Plan duration in weeks")
+    duration_weeks: int = Field(default=1, ge=1, le=2, description="Plan duration in weeks (1-2)")
     custom_notes: Optional[str] = Field(None, description="Additional requirements or notes")
 
     class Config:
         json_schema_extra = {
             "example": {
-                "duration_weeks": 4,
+                "duration_weeks": 1,
                 "custom_notes": "Focus on progressive overload, avoid jumping exercises"
             }
         }
