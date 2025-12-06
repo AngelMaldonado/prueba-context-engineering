@@ -3,11 +3,10 @@
 <div align="center">
   <img src="docs/screenshots/coachx_logo.png" alt="CoachX Logo" width="300">
 
-  ### Your AI-Powered Personal Training Assistant
+### Your AI-Powered Personal Training Assistant
 
-  Get personalized workout plans powered by AI and sports science research. CoachX combines Google Gemini with Retrieval Augmented Generation (RAG) to deliver expert-level training guidance tailored to your goals, experience, and available equipment.
+Get personalized workout plans powered by AI and sports science research. CoachX combines Google Gemini with Retrieval Augmented Generation (RAG) to deliver expert-level training guidance tailored to your goals, experience, and available equipment.
 
-  ![Landing Page](docs/screenshots/landing.png)
 </div>
 
 ---
@@ -19,11 +18,11 @@
 - 💬 **Interactive Chat with Memory**: 24/7 training assistant that remembers your conversation
 - 🥊 **Sport-Specific**: Tailored for Boxing, CrossFit, Gym, Calisthenics, and Running
 - 🏋️ **Equipment-Aware**: Plans adapt to your available equipment and gym access
-- 🔄 **Easy Reset**: Test multiple user profiles with one-click reset
 
 ## 🏗️ Tech Stack
 
 ### Backend
+
 - **FastAPI 0.104+** - Modern Python web framework
 - **SQLite + SQLAlchemy 2.0+** - Database and ORM
 - **Google Gemini Flash 2.5** - Latest LLM with extended context
@@ -32,6 +31,7 @@
 - **Sentence Transformers** - Local embeddings (free, no API calls)
 
 ### Frontend
+
 - **Vite 5+ + React 18 + TypeScript** - Fast build tool and modern React
 - **Tailwind CSS 3+** - Utility-first CSS framework
 - **Axios** - HTTP client
@@ -153,7 +153,7 @@ Visit **http://localhost:5173** 🎉
 
 ## 🔄 Resetting User Profile
 
-CoachX is designed as a **single-user MVP**. To test with different user profiles:
+CoachX is designed as a **single-user**. To test with different user profiles:
 
 ### Option 1: UI Button (Easiest)
 
@@ -178,6 +178,7 @@ rm -f coachx.db coachx.db-journal coachx.db-wal coachx.db-shm
 ## 📸 Screenshots
 
 ### Landing Page
+
 Professional landing page with clear call-to-action.
 
 ![Landing](docs/screenshots/index.png)
@@ -206,7 +207,7 @@ Fitness goals, injuries, and health conditions.
 **Step 4: Availability & Equipment**
 Training frequency, session duration, and available equipment.
 
-![Step 4](docs/screenshots/onboarding_onboarding_4.png)
+![Step 4](docs/screenshots/onboarding_4.png)
 
 ---
 
@@ -237,22 +238,26 @@ Complete exercise breakdowns with sets, reps, rest periods, and technique notes.
 ## 🎯 How to Use CoachX
 
 ### 1️⃣ Complete Onboarding
+
 - Fill in your profile across 4 steps
 - Be honest about experience level and limitations
 - Select available equipment
 
 ### 2️⃣ Generate Your First Plan
+
 - Click "Generate Workout Plan" on dashboard
 - Choose duration (1 or 2 weeks)
 - Add any custom notes (e.g., "avoid jumping exercises")
 - Wait ~10-15 seconds for AI generation
 
 ### 3️⃣ Review Your Plan
+
 - Navigate through weeks and days
 - Read exercise notes for proper technique
 - Note rest days for recovery
 
 ### 4️⃣ Ask the AI Coach
+
 - Type questions in the chat
 - Ask about technique, nutrition, or modifications
 - Chat remembers your conversation context
@@ -263,6 +268,7 @@ Complete exercise breakdowns with sets, reps, rest periods, and technique notes.
   - "Who am I?" (get your profile summary)
 
 ### 5️⃣ Generate New Plans
+
 - Create new plans as you progress
 - Plans adapt to your profile and goals
 - Each plan is personalized using RAG
@@ -306,7 +312,9 @@ pytest --cov=app
 ## 🔧 Troubleshooting
 
 ### "No module named uvicorn"
+
 **Solution**: The venv wasn't activated or installation failed.
+
 ```bash
 cd backend
 rm -rf venv
@@ -316,27 +324,36 @@ pip install -r requirements.txt
 ```
 
 ### Frontend shows "Cannot connect to backend"
+
 **Solution**: Backend isn't running or wrong port.
+
 1. Check backend is running on port 8000: `curl http://localhost:8000/health`
 2. If not, start it: `cd backend && source venv/bin/activate && python -m uvicorn app.main:app --reload`
 
 ### "Error 500" during onboarding
+
 **Solution**: Check backend logs for details. Common causes:
+
 - Missing environment variables
 - Database permission issues
 - Invalid API key
 
 ### Chat doesn't remember context
+
 **Solution**: Conversation history is working. If you reset profile, history is cleared. This is expected behavior.
 
 ### Plan generation is slow
+
 **Solution**: This is normal. AI generation takes 10-20 seconds depending on:
+
 - Plan complexity (2 weeks takes longer than 1 week)
 - Custom notes (more specific = longer generation)
 - API response time
 
 ### "Cannot import name 'WorkoutPlan'"
+
 **Solution**: This was fixed. If you still see it, pull latest changes:
+
 ```bash
 git pull origin main
 ```
@@ -437,7 +454,7 @@ Once the backend is running, visit:
 
 ## 🎓 Context Engineering
 
-This project demonstrates advanced context engineering techniques:
+This project demonstrates context engineering techniques:
 
 - 📝 **Comprehensive CLAUDE.md**: Project-specific instructions for AI assistance
 - 🎯 **Structured Prompts**: Carefully crafted prompts for workout generation and chat
@@ -452,21 +469,25 @@ See `CLAUDE.md` for the complete context engineering guide.
 ## ⚠️ Important Notes
 
 ### Single-User MVP
+
 - Designed for **one user** (no authentication)
 - Use **Reset** feature to test different profiles
 - All data stored locally in SQLite
 
 ### Plan Generation Limits
+
 - **Maximum 2 weeks** per plan (optimized for token usage)
 - Well-detailed plans with exercise notes
 - Generate multiple plans as you progress
 
 ### API Rate Limits
+
 - Using **Gemini Flash free tier**
 - Generous limits for personal use
 - Plans optimized to minimize token usage
 
 ### Data Privacy
+
 - All data stored **locally** on your machine
 - No external database
 - Reset clears everything
@@ -481,6 +502,7 @@ See `CLAUDE.md` for the complete context engineering guide.
    - Backend logs appear in the terminal running uvicorn
    - Frontend logs in browser console (F12)
 4. **Verify environment**:
+
    ```bash
    # Check Python version
    python3 --version  # Should be 3.11+
@@ -500,11 +522,3 @@ See `CLAUDE.md` for the complete context engineering guide.
 This project is for educational purposes as part of the Context Engineering technical assessment.
 
 ---
-
-<div align="center">
-
-  **Made with ❤️ and 🤖 AI**
-
-  Powered by Google Gemini Flash 2.5 & RAG
-
-</div>
