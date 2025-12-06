@@ -33,9 +33,11 @@ export default function HomePage() {
     <div className="min-h-screen bg-black flex flex-col items-center justify-center px-4">
       {/* Hero Section */}
       <div className="max-w-3xl mx-auto text-center">
-        <h1 className="text-6xl font-bold text-white mb-4">
-          Coach<span className="text-red-600">X</span>
-        </h1>
+        {/* Logo */}
+        <div className="flex justify-center mb-6">
+          <img src="/coachx.svg" alt="CoachX Logo" className="h-48 w-auto" />
+        </div>
+
         <p className="text-xl text-gray-300 mb-2">
           Your AI-Powered Personal Training Assistant
         </p>
