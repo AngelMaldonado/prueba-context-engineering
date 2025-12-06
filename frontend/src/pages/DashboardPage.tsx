@@ -532,12 +532,15 @@ function GeneratePlanModal({
                 <input
                   type="number"
                   value={params.duration_weeks}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const value = Number(e.target.value);
+                    // Clamp value between 1 and 2
+                    const clampedValue = Math.max(1, Math.min(2, value || 1));
                     setParams({
                       ...params,
-                      duration_weeks: Number(e.target.value),
-                    })
-                  }
+                      duration_weeks: clampedValue,
+                    });
+                  }}
                   min="1"
                   max="2"
                   className="input"

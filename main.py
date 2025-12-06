@@ -5,7 +5,8 @@ CoachX Launcher
 One-command setup and launch script for evaluators.
 
 Usage:
-    python main.py
+    Linux/macOS: python3 main.py
+    Windows:     python main.py  (or py main.py)
 
 This script will:
 1. Check system requirements
@@ -26,16 +27,40 @@ from pathlib import Path
 from typing import Optional
 
 
+# Detect platform-specific commands
+IS_WINDOWS = platform.system() == "Windows"
+IS_MACOS = platform.system() == "Darwin"
+IS_LINUX = platform.system() == "Linux"
+NPM_CMD = "npm.cmd" if IS_WINDOWS else "npm"
+
+# Detect if terminal supports colors
+SUPPORTS_COLOR = (
+    sys.stdout.isatty() and
+    (os.getenv("TERM") != "dumb") and
+    (not IS_WINDOWS or os.getenv("ANSICON") or "TERM" in os.environ)
+)
+
+
 class Colors:
     """Terminal colors for better UX."""
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
+    if SUPPORTS_COLOR:
+        HEADER = '\033[95m'
+        OKBLUE = '\033[94m'
+        OKCYAN = '\033[96m'
+        OKGREEN = '\033[92m'
+        WARNING = '\033[93m'
+        FAIL = '\033[91m'
+        ENDC = '\033[0m'
+        BOLD = '\033[1m'
+    else:
+        HEADER = ''
+        OKBLUE = ''
+        OKCYAN = ''
+        OKGREEN = ''
+        WARNING = ''
+        FAIL = ''
+        ENDC = ''
+        BOLD = ''
 
 
 def print_header(message: str) -> None:
@@ -73,31 +98,55 @@ def check_command(command: str) -> bool:
 def run_command(
     command: list[str],
     cwd: Optional[Path] = None,
-    capture_output: bool = False
+    capture_output: bool = False,
+    timeout: int = 600,  # 10 minutes default timeout
+    allow_failure: bool = False
 ) -> subprocess.CompletedProcess:
     """Run a shell command and return the result."""
     try:
-        return subprocess.run(
+        result = subprocess.run(
             command,
             cwd=cwd,
             check=True,
             capture_output=capture_output,
-            text=True
+            text=True,
+            timeout=timeout
         )
+        return result
+    except subprocess.TimeoutExpired:
+        print_error(f"Command timed out after {timeout}s: {' '.join(command)}")
+        if not allow_failure:
+            sys.exit(1)
+        raise
     except subprocess.CalledProcessError as e:
         print_error(f"Command failed: {' '.join(command)}")
         if capture_output and e.stderr:
             print_error(f"Error: {e.stderr}")
-        sys.exit(1)
+        if not allow_failure:
+            sys.exit(1)
+        raise
 
 
 def check_python_version() -> None:
     """Verify Python version is 3.11+."""
     print_info("Checking Python version...")
     version = sys.version_info
+
     if version.major < 3 or (version.major == 3 and version.minor < 11):
         print_error(f"Python 3.11+ required. Found: {version.major}.{version.minor}")
         sys.exit(1)
+
+    # Warn about Python 3.13+ (dependency compatibility issues)
+    if version.major == 3 and version.minor >= 13:
+        print_warning(f"Python {version.major}.{version.minor} detected")
+        if IS_WINDOWS:
+            print_warning("Some dependencies may require compilation tools (Rust, MSVC)")
+            print_info("If installation fails, install Python 3.11 or 3.12")
+        else:
+            print_warning("Some dependencies may not have pre-built wheels yet")
+            print_info("If installation fails, consider Python 3.11 or 3.12")
+        print_info("Recommended: Python 3.11 or 3.12 for maximum compatibility\n")
+
     print_success(f"Python {version.major}.{version.minor}.{version.micro}")
 
 
@@ -120,8 +169,8 @@ def check_npm() -> None:
     if not check_command("npm"):
         print_error("npm not found. Please install npm")
         sys.exit(1)
-    
-    result = run_command(["npm", "--version"], capture_output=True)
+
+    result = run_command([NPM_CMD, "--version"], capture_output=True)
     version = result.stdout.strip()
     print_success(f"npm {version}")
 
@@ -227,12 +276,38 @@ def setup_backend() -> Path:
         sys.exit(1)
 
     # Install dependencies
-    print_info("Installing Python dependencies (this may take a minute)...")
+    print_info("Installing Python dependencies (this may take 2-3 minutes)...")
 
     # Paths are already absolute, just convert to string if needed
     pip_cmd = str(pip_path) if isinstance(pip_path, Path) else pip_path
 
-    run_command([pip_cmd, "install", "-r", "requirements.txt"], cwd=backend_dir)
+    # Step 1: Upgrade pip, setuptools, and wheel for better compatibility
+    print_info("Upgrading pip and build tools...")
+    try:
+        run_command(
+            [pip_cmd, "install", "--upgrade", "pip", "setuptools", "wheel"],
+            cwd=backend_dir,
+            allow_failure=True
+        )
+        print_success("Build tools upgraded")
+    except Exception as e:
+        print_warning(f"Failed to upgrade pip: {e}")
+        print_warning("Continuing with existing pip version...")
+
+    # Step 2: Install dependencies with additional flags for reliability
+    print_info("Installing project dependencies...")
+    install_cmd = [
+        pip_cmd,
+        "install",
+        "-r", "requirements.txt",
+        "--no-cache-dir",  # Avoid cache issues across platforms
+    ]
+
+    # Add Windows-specific flag if on Windows to prefer binary wheels
+    if IS_WINDOWS:
+        install_cmd.append("--prefer-binary")
+
+    run_command(install_cmd, cwd=backend_dir)
     print_success("Backend dependencies installed")
 
     return python_path
@@ -241,17 +316,17 @@ def setup_backend() -> Path:
 def setup_frontend() -> None:
     """Install frontend dependencies."""
     print_header("Setting up Frontend")
-    
+
     frontend_dir = Path("frontend")
     if not frontend_dir.exists():
         print_error(f"Frontend directory not found: {frontend_dir}")
         sys.exit(1)
-    
+
     # Check if node_modules exists
     node_modules = frontend_dir / "node_modules"
     if not node_modules.exists():
         print_info("Installing Node.js dependencies...")
-        run_command(["npm", "install"], cwd=frontend_dir)
+        run_command([NPM_CMD, "install"], cwd=frontend_dir)
         print_success("Frontend dependencies installed")
     else:
         print_info("Node modules already installed")
@@ -287,7 +362,7 @@ def start_servers(python_path: Path) -> None:
     ]
 
     # Start frontend
-    frontend_cmd = ["npm", "run", "dev"]
+    frontend_cmd = [NPM_CMD, "run", "dev"]
 
     try:
         # Start backend process

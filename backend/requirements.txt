@@ -1,13 +1,36 @@
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
-sqlalchemy==2.0.23
-pydantic==2.5.0
-pydantic-settings==2.1.0
-python-dotenv==1.0.0
-pytest==7.4.3
-pytest-asyncio==0.21.1
-httpx==0.25.2
-chromadb==0.4.18
-langchain==0.0.350
-sentence-transformers==2.7.0
+# Core Web Framework
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+
+# Database & ORM
+sqlalchemy==2.0.36
+
+# Data Validation & Settings (with better wheel support)
+pydantic==2.9.2
+pydantic-settings==2.6.1
+python-dotenv==1.0.1
+
+# Testing
+pytest==8.3.3
+pytest-asyncio==0.24.0
+httpx==0.27.2
+
+# Vector Database (ChromaDB with better dependency management)
+# Using older stable version to avoid onnxruntime compilation issues
+chromadb==0.4.24
+
+# AI & LangChain
+langchain==0.3.7
+langchain-community==0.3.7
+langchain-core==0.3.15
+
+# Embeddings (pinned for stability)
+sentence-transformers==3.2.1
+
+# Google Gemini API
 google-generativeai==0.8.3
+
+# Additional dependencies for cross-platform compatibility
+# These ensure pre-built wheels are available
+numpy>=1.24.0,<2.0.0
+typing-extensions>=4.12.0
