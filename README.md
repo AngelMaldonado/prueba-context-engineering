@@ -45,7 +45,9 @@ Get personalized workout plans powered by AI and sports science research. CoachX
 
 Before you begin, ensure you have:
 
-- ✅ **Python 3.11+** ([Download](https://www.python.org/downloads/))
+- ✅ **Python 3.11 or 3.12** ([Download](https://www.python.org/downloads/))
+  - ⚠️ **Windows Users**: Python 3.13+ may cause dependency compilation errors
+  - Recommended: Python 3.11 or 3.12 for best cross-platform compatibility
 - ✅ **Node.js 18+** and npm ([Download](https://nodejs.org/))
 - ✅ **Google Gemini API Key** (Free - see below)
 
@@ -69,7 +71,13 @@ git clone https://github.com/cortezxm/prueba-context-engineering
 cd prueba-context-engineering
 
 # 2. Run the launcher
+# Linux/macOS:
 python3 main.py
+
+# Windows:
+python main.py
+# or
+py main.py
 ```
 
 **What the launcher does:**
@@ -356,6 +364,36 @@ pip install -r requirements.txt
 
 ```bash
 git pull origin main
+```
+
+### Windows: Dependency Compilation Errors
+
+**Symptoms**: Errors about missing Rust compiler, MSVC, or `pydantic-core` compilation failures.
+
+**Root Cause**: Python 3.13+ on Windows requires compiling some dependencies (pydantic-core, numpy) which need:
+- Rust compiler (for pydantic)
+- Microsoft Visual C++ Build Tools (for numpy)
+
+**Solution**:
+
+**Option 1 (Recommended)**: Use Python 3.11 or 3.12
+
+1. Uninstall Python 3.13+
+2. Install Python 3.11 or 3.12 from [python.org](https://www.python.org/downloads/)
+3. Run `python main.py` again
+
+**Option 2**: Install required compilers
+
+1. Install Rust: https://www.rust-lang.org/tools/install
+2. Install Visual Studio Build Tools: https://visualstudio.microsoft.com/downloads/
+   - Select "Desktop development with C++"
+3. Restart terminal and run `python main.py` again
+
+**Verification**:
+
+```bash
+# Check Python version (should be 3.11 or 3.12)
+python --version
 ```
 
 ---
