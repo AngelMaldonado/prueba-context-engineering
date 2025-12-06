@@ -15,9 +15,9 @@ pytest==8.3.3
 pytest-asyncio==0.24.0
 httpx==0.27.2
 
-# Vector Database - using newer version with better Windows support
-# This version has better pre-built wheels and dependency management
-chromadb==0.5.23
+# Vector Database - using stable version with guaranteed pre-built wheels
+# Version 0.4.22 has wheels for all platforms and doesn't require compilation
+chromadb==0.4.22
 
 # AI & LangChain
 langchain==0.3.7
