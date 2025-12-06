@@ -15,9 +15,9 @@ pytest==8.3.3
 pytest-asyncio==0.24.0
 httpx==0.27.2
 
-# Vector Database (ChromaDB with better dependency management)
-# Using older stable version to avoid onnxruntime compilation issues
-chromadb==0.4.24
+# Vector Database - using newer version with better Windows support
+# This version has better pre-built wheels and dependency management
+chromadb==0.5.23
 
 # AI & LangChain
 langchain==0.3.7
@@ -31,6 +31,9 @@ sentence-transformers==3.2.1
 google-generativeai==0.8.3
 
 # Additional dependencies for cross-platform compatibility
-# These ensure pre-built wheels are available
-numpy>=1.24.0,<2.0.0
 typing-extensions>=4.12.0
+
+# IMPORTANT: numpy is NOT explicitly listed here because:
+# - chromadb and sentence-transformers install compatible numpy versions
+# - Explicitly pinning numpy causes compilation issues on Windows
+# - Let the dependencies handle numpy installation automatically
