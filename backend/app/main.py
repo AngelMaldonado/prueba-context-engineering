@@ -32,14 +32,14 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# CORS Middleware - Allow frontend (localhost:3000) to make requests
+# CORS Middleware - Allow frontend (localhost:3000 and 5173) to make requests
 # Without this, browser will block requests from different ports
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
-    allow_credentials=settings.CORS_ALLOW_CREDENTIALS,
-    allow_methods=settings.CORS_ALLOW_METHODS,
-    allow_headers=settings.CORS_ALLOW_HEADERS,
+    allow_origins=["*"],  # Allow all origins for development
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
@@ -151,42 +151,57 @@ async def ai_test() -> dict:
     return test_gemini_connection()
 
 
-@app.get("/ai/chat")
+@app.post("/ai/chat")
 async def ai_chat(
-    q: str,
-    sport: Optional[str] = None,
-    top_k: int = 3,
+    request: dict,
     db: Session = Depends(get_db)
 ) -> dict:
     """
-    AI chat endpoint with RAG context and user personalization.
+    AI chat endpoint with RAG context, user personalization, and conversation history.
 
     Combines RAG retrieval with Gemini generation to provide
-    context-aware, personalized training advice based on user profile.
+    context-aware, personalized training advice based on user profile
+    and previous conversation context.
 
     Args:
-        q: User's question
-        sport: Optional sport filter (boxing, crossfit, gym)
-        top_k: Number of RAG context chunks (default: 3)
+        request: JSON body with:
+            - q: User's question (required)
+            - sport: Optional sport filter (boxing, crossfit, gym)
+            - top_k: Number of RAG context chunks (default: 3)
+            - conversation_history: Optional list of previous messages
         db: Database session (injected)
 
     Returns:
         AI-generated response with metadata
 
     Example:
-        GET /ai/chat?q=how+to+improve+jab&sport=boxing
+        POST /ai/chat
+        {
+            "q": "How do I improve my jab?",
+            "sport": "boxing",
+            "conversation_history": [
+                {"role": "user", "content": "What is a jab?"},
+                {"role": "assistant", "content": "A jab is..."}
+            ]
+        }
     """
     from fastapi import HTTPException, status
     from app.crud import profile as crud_profile
 
     try:
+        # Extract parameters from request body
+        q = request.get("q")
+        sport = request.get("sport")
+        top_k = request.get("top_k", 3)
+        conversation_history = request.get("conversation_history", [])
+
         if not q or len(q.strip()) == 0:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Query parameter 'q' is required"
             )
 
-        logger.info(f"Chat request: q='{q[:50]}...', sport={sport}")
+        logger.info(f"Chat request: q='{q[:50]}...', sport={sport}, history_len={len(conversation_history)}")
 
         # Load user profile for personalization
         user_context = None
@@ -198,12 +213,13 @@ async def ai_chat(
         except Exception as e:
             logger.warning(f"Failed to load user profile, continuing without personalization: {e}")
 
-        # Generate response with RAG and user context
+        # Generate response with RAG, user context, and conversation history
         response_text = generate_with_rag(
             query=q,
             sport=sport,
             top_k=top_k,
-            user_context=user_context
+            user_context=user_context,
+            conversation_history=conversation_history
         )
 
         return {
@@ -211,6 +227,7 @@ async def ai_chat(
             "sport": sport,
             "response": response_text,
             "personalized": user_context is not None,
+            "has_history": len(conversation_history) > 0,
             "status": "success"
         }
 
