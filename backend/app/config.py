@@ -1,0 +1,61 @@
+"""
+Configuration management for CoachX backend.
+
+Uses Pydantic Settings to load and validate environment variables.
+"""
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import List
+
+
+class Settings(BaseSettings):
+    """
+    Application settings loaded from environment variables.
+
+    All settings can be overridden by creating a .env file in the backend/ directory.
+    """
+
+    # Application
+    APP_NAME: str = "CoachX API"
+    APP_VERSION: str = "1.0.0"
+    DEBUG: bool = True
+
+    # Server
+    HOST: str = "0.0.0.0"
+    PORT: int = 8000
+
+    # Database
+    DATABASE_URL: str = "sqlite:///./coachx.db"
+    DATABASE_ECHO: bool = False  # Set to True to see SQL queries
+
+    # CORS - Allow frontend to make requests
+    CORS_ORIGINS: List[str] = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",  # Vite default port
+        "http://127.0.0.1:5173"
+    ]
+    CORS_ALLOW_CREDENTIALS: bool = True
+    CORS_ALLOW_METHODS: List[str] = ["*"]
+    CORS_ALLOW_HEADERS: List[str] = ["*"]
+
+    # AI - Google Gemini
+    GEMINI_API_KEY: str = ""
+    GEMINI_MODEL: str = "models/gemini-2.5-flash"
+
+    # RAG - ChromaDB
+    CHROMA_PERSIST_DIRECTORY: str = "./chroma_db"
+
+    # Additional CORS origins (can be overridden in .env)
+    ALLOWED_ORIGINS: str = ""
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+        extra="ignore"  # Allow extra fields in .env without validation errors
+    )
+
+
+# Global settings instance
+settings = Settings()
