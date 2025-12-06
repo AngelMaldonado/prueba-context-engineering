@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 def generate_workout_plan(
     profile: MVPUserProfile,
-    duration_weeks: int = 4,
+    duration_weeks: int = 1,
     custom_notes: Optional[str] = None
 ) -> Dict[str, Any]:
     """
@@ -25,7 +25,7 @@ def generate_workout_plan(
 
     Args:
         profile: User profile with fitness information
-        duration_weeks: Duration of the plan in weeks (1-12)
+        duration_weeks: Duration of the plan in weeks (1-2)
         custom_notes: Additional user requirements
 
     Returns:
@@ -64,14 +64,14 @@ def generate_workout_plan(
         logger.info(f"Generating plan with prompt length: {len(prompt)} characters")
 
         # Step 4: Generate plan with Gemini
-        # Use higher token limit for workout plans (they're long JSONs)
+        # Use maximum token limit for plan generation
         from google.generativeai.types import GenerationConfig
 
         generation_config = GenerationConfig(
             temperature=0.7,
             top_p=0.9,
             top_k=40,
-            max_output_tokens=8192,  # Increased for large workout plans
+            max_output_tokens=8192,  # Maximum for Gemini 2.5 Flash
         )
 
         model = get_gemini_client()
@@ -195,55 +195,43 @@ def _build_workout_plan_prompt(
     """Build the prompt for workout plan generation."""
     custom_section = f"\n\nADDITIONAL REQUIREMENTS:\n{custom_notes}" if custom_notes else ""
 
-    prompt = f"""You are an expert fitness coach creating a personalized {duration_weeks}-week workout plan.
+    # Build week structure example based on duration
+    weeks_structure = []
+    for week_num in range(1, min(duration_weeks + 1, 4)):  # Show first 3 weeks as example
+        weeks_structure.append(f'    "week_{week_num}": [...]')
+    weeks_example = ',\n'.join(weeks_structure)
 
-USER PROFILE:
-{user_context}
+    prompt = f"""Create a {duration_weeks}-week {sport} training plan. JSON only, be concise.
 
-RELEVANT TRAINING KNOWLEDGE:
-{rag_context}
+User: {user_context[:400]}
 {custom_section}
 
-Generate a complete {duration_weeks}-week workout plan in **valid JSON format only**. No markdown, no explanations, just the JSON.
+IMPORTANT:
+- Generate EXACTLY {duration_weeks} weeks (week_1 through week_{duration_weeks})
+- Include REST DAYS explicitly in each week
+- For rest days use: {{"day": "Rest", "focus": "Recovery", "exercises": [], "duration_min": 0}}
 
-IMPORTANT JSON STRUCTURE:
+Format:
 {{
-  "title": "Descriptive plan title",
-  "description": "Brief 1-2 sentence description",
+  "title": "Short title",
+  "description": "1 sentence",
   "plan_structure": {{
-    "week_1": [
-      {{
-        "day": "Monday",
-        "focus": "Upper Body Strength",
-        "warmup": "5 min light cardio + arm circles",
-        "exercises": [
-          {{
-            "name": "Push-ups",
-            "sets": 3,
-            "reps": "10-12",
-            "rest_seconds": 60,
-            "notes": "Modify on knees if needed"
-          }}
-        ],
-        "cooldown": "5 min stretching",
-        "duration_minutes": 45
-      }}
-    ]
+{weeks_example}
   }}
 }}
 
-REQUIREMENTS:
-1. Create {duration_weeks} weeks with appropriate progression
-2. Match training days to user's availability ({user_context.split('Available:')[1].split('\n')[0] if 'Available:' in user_context else '3-4 days/week'})
-3. Consider user's experience level and equipment
-4. Work around any injuries or limitations
-5. Include warmup and cooldown for each day
-6. Provide specific exercises with sets, reps, and rest periods
-7. Add helpful form cues in the notes field
-8. Ensure progressive overload across weeks
-9. Focus on {sport}-specific movements when applicable
+Week structure: Array of daily workouts
+Day format: {{"day": "Day name", "focus": "Focus area", "exercises": [{{"name": "Exercise", "sets": 3, "reps": "10-12", "rest_seconds": 60, "notes": "Optional tip"}}], "duration_min": 45}}
 
-Return ONLY the JSON, no other text."""
+Guidelines:
+- Use {sport}-specific exercises, bodyweight if no equipment
+- 3-5 exercises per training day
+- Include 1-2 rest days per week based on user's available days
+- Progress difficulty across weeks
+- Keep exercise notes brief
+- Include warmup/cooldown in duration
+
+JSON only, no markdown blocks."""
 
     return prompt
 
