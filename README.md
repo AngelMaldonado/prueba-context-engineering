@@ -11,6 +11,118 @@ Get personalized workout plans powered by AI and sports science research. CoachX
 
 ---
 
+## 💡 The Problem
+
+I've been training **boxing and CrossFit** for years. I've had my share of bad trainers—people who didn't understand progression, who gave cookie-cutter programs, or who simply weren't invested in my goals.
+
+I turned to ChatGPT and other LLMs for training advice. The AI was actually **better than most trainers** I'd worked with. It understood progressive overload, periodization, and could adapt to my equipment and limitations.
+
+But there was **one massive problem**: **I kept losing my conversations.**
+
+Every time I started a new chat, I had to re-explain everything—my goals, my injuries, my equipment, my training history. It was exhausting and inefficient.
+
+**CoachX solves this.** It's a personal training AI that:
+
+- ✅ **Remembers your profile** (no more re-explaining yourself)
+- ✅ **Generates personalized plans** using sport-specific research (RAG)
+- ✅ **Maintains conversation context** across sessions
+- ✅ **Adapts to your equipment** and limitations
+
+Think of it as ChatGPT for fitness, but it **actually knows who you are**.
+
+---
+
+## 🚀 Quick Start - One Command
+
+**Prerequisites:**
+
+- ✅ **Python 3.8+** (just to run the launcher)
+- ✅ **[Docker Desktop](https://docs.docker.com/get-docker/)** (Windows/Mac) or **Docker Engine** (Linux)
+- ✅ **[Google Gemini API Key](https://aistudio.google.com/app/apikey)** (free)
+
+**Get started with ONE command:**
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/cortezxm/prueba-context-engineering
+cd prueba-context-engineering
+
+# 2. Run the launcher (it does everything!)
+python3 main.py   # Linux/macOS
+# or
+python main.py    # Windows
+```
+
+**That's literally it!** 🎉
+
+The launcher will:
+
+1. ✅ Check that Docker is installed and running
+2. ✅ Ask for your Gemini API key (only first time)
+3. ✅ Build Docker images (~5 minutes first time, instant after)
+4. ✅ Start both backend and frontend services
+5. ✅ Show you the URLs and live logs
+
+**When you see this, you're ready:**
+
+```
+CoachX is running!
+
+  Frontend: http://localhost:5173
+  Backend API: http://localhost:8000
+  API Docs: http://localhost:8000/docs
+
+Press Ctrl+C to stop CoachX
+```
+
+**To stop:** Just press `Ctrl+C` in the terminal (it cleans up automatically)
+
+**To restart:** Run `python3 main.py` again (instant start, no rebuild)
+
+**To reset data:** `docker compose down && rm -rf backend/coachx.db backend/chroma_db/`
+
+---
+
+## 🎯 How to Use CoachX
+
+### 1️⃣ Complete Onboarding
+
+- Fill in your profile across 4 steps
+- Be honest about experience level and limitations
+- Select available equipment
+
+### 2️⃣ Generate Your First Plan
+
+- Click "Generate Workout Plan" on dashboard
+- Choose duration (1 or 2 weeks)
+- Add any custom notes (e.g., "avoid jumping exercises")
+- Wait ~10-15 seconds for AI generation
+
+### 3️⃣ Review Your Plan
+
+- Navigate through weeks and days
+- Read exercise notes for proper technique
+- Note rest days for recovery
+
+### 4️⃣ Ask the AI Coach
+
+- Type questions in the chat
+- Ask about technique, nutrition, or modifications
+- Chat remembers your conversation context
+- Examples:
+  - "How do I improve my jab technique?"
+  - "What should I eat before training?"
+  - "Can you explain progressive overload?"
+  - "Who am I?" (get your profile summary)
+
+### 5️⃣ Generate New Plans
+
+- Create new plans as you progress
+- Plans adapt to your profile and goals
+- Each plan is personalized using RAG
+
+---
+
 ## ✨ Features
 
 - 🎯 **Intelligent 4-Step Onboarding**: Guided profile creation with real-time validation
@@ -18,17 +130,21 @@ Get personalized workout plans powered by AI and sports science research. CoachX
 - 💬 **Interactive Chat with Memory**: 24/7 training assistant that remembers your conversation
 - 🥊 **Sport-Specific**: Tailored for Boxing, CrossFit, Gym, Calisthenics, and Running
 - 🏋️ **Equipment-Aware**: Plans adapt to your available equipment and gym access
+- 🔄 **Easy Reset**: Start fresh with a new profile anytime
+- 🐳 **Dockerized**: Cross-platform compatibility (Windows, macOS, Linux)
+
+---
 
 ## 🏗️ Tech Stack
 
 ### Backend
 
-- **FastAPI 0.104+** - Modern Python web framework
-- **SQLite + SQLAlchemy 2.0+** - Database and ORM
+- **FastAPI 0.115.0** - Modern Python web framework
+- **SQLite + SQLAlchemy 2.0.35** - Database and ORM
 - **Google Gemini Flash 2.5** - Latest LLM with extended context
-- **ChromaDB** - Vector database for RAG
-- **LangChain 0.1+** - RAG orchestration
-- **Sentence Transformers** - Local embeddings (free, no API calls)
+- **ChromaDB 0.4.22** - Vector database for RAG
+- **LangChain 0.3.7** - RAG orchestration
+- **Sentence Transformers 3.2.1** - Local embeddings (free, no API calls)
 
 ### Frontend
 
@@ -37,149 +153,10 @@ Get personalized workout plans powered by AI and sports science research. CoachX
 - **Axios** - HTTP client
 - **React Router** - Client-side routing
 
----
+### Infrastructure
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-Before you begin, ensure you have:
-
-- ✅ **Python 3.11 or 3.12** ([Download](https://www.python.org/downloads/))
-  - ⚠️ **Windows Users**: Python 3.13+ may cause dependency compilation errors
-  - Recommended: Python 3.11 or 3.12 for best cross-platform compatibility
-- ✅ **Node.js 18+** and npm ([Download](https://nodejs.org/))
-- ✅ **Google Gemini API Key** (Free - see below)
-
-#### Getting Your Gemini API Key (Free)
-
-1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
-2. Click "Create API Key"
-3. Copy the key - you'll need it during setup
-
-> **Note**: Gemini Flash has a generous free tier. This project is optimized to stay within limits (max 2-week plans).
-
----
-
-### Quick Start (Recommended)
-
-**One command to rule them all:**
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/cortezxm/prueba-context-engineering
-cd prueba-context-engineering
-
-# 2. Run the launcher
-# Linux/macOS:
-python3 main.py
-
-# Windows:
-python main.py
-# or
-py main.py
-```
-
-**What the launcher does:**
-
-1. ✅ Checks system requirements (Python, Node.js, npm)
-2. ✅ Creates Python virtual environment
-3. ✅ Installs all backend dependencies
-4. ✅ Installs all frontend dependencies
-5. ✅ Asks for your Gemini API Key
-6. ✅ Configures environment variables
-7. ✅ Starts both servers with real-time logs
-
-**When ready, you'll see:**
-
-```
-✅ Backend running on http://localhost:8000
-✅ Frontend running on http://localhost:5173
-✅ CoachX is ready! 🥊
-
-🌐 Open your browser at: http://localhost:5173
-```
-
-**First time setup takes ~2-3 minutes** (installing dependencies). Subsequent runs are instant.
-
----
-
-### Manual Installation (Alternative)
-
-If you prefer to set up manually:
-
-<details>
-<summary>Click to expand manual installation steps</summary>
-
-#### Backend Setup
-
-```bash
-cd backend
-
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Configure environment
-cp .env.example .env
-nano .env  # Edit and add your GEMINI_API_KEY
-```
-
-#### Frontend Setup
-
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# Configure environment (optional - defaults work)
-cp .env.example .env.local
-```
-
-#### Start Servers
-
-```bash
-# Terminal 1 - Backend
-cd backend
-source venv/bin/activate
-python -m uvicorn app.main:app --reload --port 8000
-
-# Terminal 2 - Frontend
-cd frontend
-npm run dev
-```
-
-Visit **http://localhost:5173** 🎉
-
-</details>
-
----
-
-## 🔄 Resetting User Profile
-
-CoachX is designed as a **single-user**. To test with different user profiles:
-
-### Option 1: UI Button (Easiest)
-
-1. Navigate to the **Dashboard**
-2. Click the **"Reset"** button (next to "Generate Workout Plan")
-3. Confirm the deletion
-4. You'll be redirected to the home page
-5. Click "Get Started" to create a new profile
-
-### Option 2: Manual Database Reset
-
-```bash
-cd backend
-rm -f coachx.db coachx.db-journal coachx.db-wal coachx.db-shm
-# Backend will recreate the database automatically on next startup
-```
-
-> **Important**: After reset, clear your browser's localStorage (or use incognito mode) to ensure chat history is fully cleared.
+- **Docker** - Containerization for cross-platform consistency
+- **Docker Compose** - Multi-container orchestration
 
 ---
 
@@ -243,214 +220,205 @@ Complete exercise breakdowns with sets, reps, rest periods, and technique notes.
 
 ---
 
-## 🎯 How to Use CoachX
+## 🔄 Resetting User Profile
 
-### 1️⃣ Complete Onboarding
+CoachX is designed as a **single-user** MVP. To test with different user profiles:
 
-- Fill in your profile across 4 steps
-- Be honest about experience level and limitations
-- Select available equipment
+### Using Docker
 
-### 2️⃣ Generate Your First Plan
+```bash
+# Stop containers and remove volumes (clears all data)
+docker-compose down -v
 
-- Click "Generate Workout Plan" on dashboard
-- Choose duration (1 or 2 weeks)
-- Add any custom notes (e.g., "avoid jumping exercises")
-- Wait ~10-15 seconds for AI generation
+# Start fresh
+docker-compose up
+```
 
-### 3️⃣ Review Your Plan
+### Using the UI
 
-- Navigate through weeks and days
-- Read exercise notes for proper technique
-- Note rest days for recovery
+1. Navigate to the **Dashboard**
+2. Click the **"Reset"** button (next to "Generate Workout Plan")
+3. Confirm the deletion
+4. You'll be redirected to the home page
+5. Click "Get Started" to create a new profile
 
-### 4️⃣ Ask the AI Coach
-
-- Type questions in the chat
-- Ask about technique, nutrition, or modifications
-- Chat remembers your conversation context
-- Examples:
-  - "How do I improve my jab technique?"
-  - "What should I eat before training?"
-  - "Can you explain progressive overload?"
-  - "Who am I?" (get your profile summary)
-
-### 5️⃣ Generate New Plans
-
-- Create new plans as you progress
-- Plans adapt to your profile and goals
-- Each plan is personalized using RAG
+> **Tip**: After reset, clear your browser's localStorage (or use incognito mode) to ensure chat history is fully cleared.
 
 ---
 
-## 🧪 Testing
+## 🛠️ Manual Installation (Alternative)
 
-### Quick Test Flow
+<details>
+<summary>Click to expand manual installation steps</summary>
+
+If you prefer not to use Docker, you can install manually:
+
+### Prerequisites
+
+- ✅ **Python 3.11 or 3.12** ([Download](https://www.python.org/downloads/))
+  - ⚠️ **Windows Users**: Python 3.13 requires compilers (use 3.11 or 3.12)
+- ✅ **Node.js 18+** and npm ([Download](https://nodejs.org/))
+- ✅ **Google Gemini API Key** ([Get it here](https://aistudio.google.com/app/apikey))
+
+### Option 1: One-Command Launcher
 
 ```bash
-# 1. Start the application
-python3 main.py
+# Clone repository
+git clone https://github.com/cortezxm/prueba-context-engineering
+cd prueba-context-engineering
 
-# 2. Test the complete flow:
-# ✅ Complete onboarding with a test profile
-# ✅ Generate a 2-week workout plan
-# ✅ Ask the chat: "Who am I?"
-# ✅ Ask: "How do I do a proper squat?"
-# ✅ Navigate through the plan
-# ✅ Click Reset button
-# ✅ Verify you're back at home page
-
-# 3. Create a different user profile
-# ✅ Different sport (e.g., Boxing vs CrossFit)
-# ✅ Different experience level
-# ✅ Different equipment availability
-# ✅ Generate plan and verify it's different
+# Run launcher
+python3 main.py  # Linux/macOS
+# or
+python main.py   # Windows
 ```
 
-### Backend Tests
+The launcher will:
+
+1. Check system requirements
+2. Create Python virtual environment
+3. Install all dependencies
+4. Ask for your Gemini API Key
+5. Configure environment variables
+6. Start both servers
+
+### Option 2: Manual Setup
+
+#### Backend Setup
 
 ```bash
 cd backend
-source venv/bin/activate
-pytest --cov=app
+
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure environment
+cp .env.example .env
+nano .env  # Add your GEMINI_API_KEY
 ```
+
+#### Frontend Setup
+
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Configure environment (optional)
+cp .env.example .env.local
+```
+
+#### Start Servers
+
+```bash
+# Terminal 1 - Backend
+cd backend
+source venv/bin/activate
+python -m uvicorn app.main:app --reload --port 8000
+
+# Terminal 2 - Frontend
+cd frontend
+npm run dev
+```
+
+Visit **http://localhost:5173** 🎉
+
+</details>
 
 ---
 
 ## 🔧 Troubleshooting
 
-### "No module named uvicorn"
+### Docker Issues
 
-**Solution**: The venv wasn't activated or installation failed.
+#### Port Already in Use
+
+**Symptoms**: `Error starting userland proxy: listen tcp4 0.0.0.0:8000: bind: address already in use`
+
+**Solution**: Stop the process using the port or change the port in `docker-compose.yml`:
+
+```yaml
+ports:
+  - "8001:8000" # Change 8000 to 8001
+```
+
+#### Containers Won't Start
+
+**Solution**: Check logs and rebuild:
+
+```bash
+# View logs
+docker-compose logs backend
+docker-compose logs frontend
+
+# Rebuild from scratch
+docker-compose down -v
+docker-compose build --no-cache
+docker-compose up
+```
+
+#### Permission Denied on Linux
+
+**Solution**: Add your user to docker group:
+
+```bash
+sudo usermod -aG docker $USER
+# Log out and log back in
+```
+
+### Application Issues
+
+#### Chat Doesn't Remember Context
+
+**Solution**: Conversation history is stored in the database. If you reset the profile, history is cleared. This is expected behavior.
+
+#### Plan Generation Is Slow
+
+**Solution**: This is normal. AI generation takes 10-20 seconds depending on plan complexity and API response time.
+
+#### Frontend Shows "Cannot Connect to Backend"
+
+**Solution**:
+
+- **Docker**: Ensure both containers are running (`docker-compose ps`)
+- **Manual**: Check backend is running (`curl http://localhost:8000/health`)
+
+#### Error 500 During Onboarding
+
+**Solution**: Check backend logs:
+
+- **Docker**: `docker-compose logs backend`
+- **Manual**: Check terminal running uvicorn
+
+Common causes:
+
+- Missing or invalid `GEMINI_API_KEY`
+- Database permission issues
+- API rate limits exceeded
+
+### Manual Installation Issues
+
+#### Windows: Dependency Compilation Errors
+
+**Symptoms**: Errors about missing Rust compiler, MSVC, or compilation failures.
+
+**Solution**: Use Docker (recommended) or install Python 3.11/3.12 instead of 3.13.
+
+#### "No module named uvicorn"
+
+**Solution**: Virtual environment wasn't activated or installation failed.
 
 ```bash
 cd backend
 rm -rf venv
 python3 -m venv venv
-source venv/bin/activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-```
-
-### Frontend shows "Cannot connect to backend"
-
-**Solution**: Backend isn't running or wrong port.
-
-1. Check backend is running on port 8000: `curl http://localhost:8000/health`
-2. If not, start it: `cd backend && source venv/bin/activate && python -m uvicorn app.main:app --reload`
-
-### "Error 500" during onboarding
-
-**Solution**: Check backend logs for details. Common causes:
-
-- Missing environment variables
-- Database permission issues
-- Invalid API key
-
-### Chat doesn't remember context
-
-**Solution**: Conversation history is working. If you reset profile, history is cleared. This is expected behavior.
-
-### Plan generation is slow
-
-**Solution**: This is normal. AI generation takes 10-20 seconds depending on:
-
-- Plan complexity (2 weeks takes longer than 1 week)
-- Custom notes (more specific = longer generation)
-- API response time
-
-### "Cannot import name 'WorkoutPlan'"
-
-**Solution**: This was fixed. If you still see it, pull latest changes:
-
-```bash
-git pull origin main
-```
-
-### Windows: Dependency Compilation Errors
-
-**Symptoms**: Errors about missing Rust compiler, MSVC, or `pydantic-core` compilation failures.
-
-**Root Cause**: Python 3.13+ on Windows requires compiling some dependencies (pydantic-core, numpy) which need:
-- Rust compiler (for pydantic)
-- Microsoft Visual C++ Build Tools (for numpy)
-
-**Solution**:
-
-**Option 1 (Recommended)**: Use Python 3.11 or 3.12
-
-1. Uninstall Python 3.13+
-2. Install Python 3.11 or 3.12 from [python.org](https://www.python.org/downloads/)
-3. Run `python main.py` again
-
-**Option 2**: Install required compilers
-
-1. Install Rust: https://www.rust-lang.org/tools/install
-2. Install Visual Studio Build Tools: https://visualstudio.microsoft.com/downloads/
-   - Select "Desktop development with C++"
-3. Restart terminal and run `python main.py` again
-
-**Verification**:
-
-```bash
-# Check Python version (should be 3.11 or 3.12)
-python --version
-```
-
----
-
-## 📁 Project Structure
-
-```
-prueba-context-engineering/
-├── main.py                      # One-command launcher
-├── CLAUDE.md                    # Context Engineering guide
-├── README.md                    # This file
-│
-├── backend/
-│   ├── app/
-│   │   ├── main.py              # FastAPI application
-│   │   ├── config.py            # Settings management
-│   │   ├── api/                 # API endpoints
-│   │   │   ├── profile.py       # User profile endpoints
-│   │   │   └── workout.py       # Workout plan endpoints
-│   │   ├── ai/                  # AI & RAG system
-│   │   │   ├── gemini.py        # Gemini integration
-│   │   │   ├── rag.py           # RAG implementation
-│   │   │   ├── prompts.py       # AI prompts
-│   │   │   └── workout_generator.py
-│   │   ├── crud/                # Database operations
-│   │   ├── models/              # SQLAlchemy models
-│   │   └── schemas/             # Pydantic schemas
-│   ├── knowledge_base/          # RAG documents
-│   │   ├── boxing/
-│   │   ├── crossfit/
-│   │   └── gym/
-│   ├── requirements.txt
-│   └── .env.example
-│
-├── frontend/
-│   ├── src/
-│   │   ├── main.tsx             # Entry point
-│   │   ├── App.tsx              # Router setup
-│   │   ├── pages/               # Route components
-│   │   │   ├── HomePage.tsx
-│   │   │   ├── OnboardingPage.tsx
-│   │   │   ├── DashboardPage.tsx
-│   │   │   └── WorkoutPlanPage.tsx
-│   │   ├── components/          # Reusable components
-│   │   │   ├── ChatSection.tsx
-│   │   │   ├── LoadingSpinner.tsx
-│   │   │   └── ErrorMessage.tsx
-│   │   ├── lib/
-│   │   │   └── api.ts           # API client
-│   │   └── types/
-│   │       └── index.ts         # TypeScript types
-│   ├── package.json
-│   ├── vite.config.ts
-│   └── .env.example
-│
-└── docs/
-    └── screenshots/             # Application screenshots
 ```
 
 ---
@@ -476,7 +444,57 @@ ALLOWED_ORIGINS=http://localhost:5173
 VITE_API_URL=http://localhost:8000
 ```
 
-> **Note**: The launcher (`main.py`) creates these files automatically. Manual setup only needed if not using launcher.
+> **Note**: When using Docker, set `GEMINI_API_KEY` in the root `.env` file. Docker Compose will inject it into the containers.
+
+---
+
+## 📁 Project Structure
+
+```
+prueba-context-engineering/
+├── docker-compose.yml           # Docker orchestration
+├── .env.example                 # Environment template
+├── main.py                      # One-command launcher (manual setup)
+├── CLAUDE.md                    # Context Engineering guide
+├── README.md                    # This file
+│
+├── backend/
+│   ├── Dockerfile               # Backend container config
+│   ├── .dockerignore
+│   ├── app/
+│   │   ├── main.py              # FastAPI application
+│   │   ├── config.py            # Settings management
+│   │   ├── api/                 # API endpoints
+│   │   ├── ai/                  # AI & RAG system
+│   │   ├── crud/                # Database operations
+│   │   ├── models/              # SQLAlchemy models
+│   │   └── schemas/             # Pydantic schemas
+│   ├── knowledge_base/          # RAG documents
+│   │   ├── boxing/
+│   │   ├── crossfit/
+│   │   └── gym/
+│   ├── requirements.txt
+│   └── .env.example
+│
+├── frontend/
+│   ├── Dockerfile               # Frontend container config
+│   ├── .dockerignore
+│   ├── src/
+│   │   ├── main.tsx             # Entry point
+│   │   ├── App.tsx              # Router setup
+│   │   ├── pages/               # Route components
+│   │   ├── components/          # Reusable components
+│   │   ├── lib/
+│   │   │   └── api.ts           # API client
+│   │   └── types/
+│   │       └── index.ts         # TypeScript types
+│   ├── package.json
+│   ├── vite.config.ts
+│   └── .env.example
+│
+└── docs/
+    └── screenshots/             # Application screenshots
+```
 
 ---
 
@@ -499,6 +517,7 @@ This project demonstrates context engineering techniques:
 - 🔍 **RAG Integration**: Sport-specific knowledge retrieval for accurate advice
 - 💬 **Conversation Memory**: Context-aware chat that remembers user history
 - 🏗️ **Modular Architecture**: Clean separation of concerns for maintainability
+- 📋 **PRP Methodology**: Problem Resolution Plans for systematic implementation
 
 See `CLAUDE.md` for the complete context engineering guide.
 
@@ -510,7 +529,7 @@ See `CLAUDE.md` for the complete context engineering guide.
 
 - Designed for **one user** (no authentication)
 - Use **Reset** feature to test different profiles
-- All data stored locally in SQLite
+- All data stored locally (SQLite + ChromaDB)
 
 ### Plan Generation Limits
 
@@ -526,8 +545,8 @@ See `CLAUDE.md` for the complete context engineering guide.
 
 ### Data Privacy
 
-- All data stored **locally** on your machine
-- No external database
+- All data stored **locally** in Docker volumes or on your machine
+- No external database or cloud storage
 - Reset clears everything
 
 ---
@@ -535,23 +554,30 @@ See `CLAUDE.md` for the complete context engineering guide.
 ## 🆘 Need Help?
 
 1. **Check Troubleshooting** section above
-2. **Review API Docs**: http://localhost:8000/docs
-3. **Check logs**:
-   - Backend logs appear in the terminal running uvicorn
-   - Frontend logs in browser console (F12)
-4. **Verify environment**:
+2. **View logs**:
 
    ```bash
-   # Check Python version
-   python3 --version  # Should be 3.11+
+   # Docker
+   docker-compose logs backend
+   docker-compose logs frontend
 
-   # Check Node version
-   node --version     # Should be 18+
-
-   # Check if servers are running
-   curl http://localhost:8000/health
-   curl http://localhost:5173
+   # Manual
+   # Check terminal running uvicorn (backend)
+   # Check browser console F12 (frontend)
    ```
+
+3. **Verify environment**:
+
+   ```bash
+   # Docker
+   docker-compose ps  # Check if containers are running
+
+   # Manual
+   python3 --version  # Should be 3.11 or 3.12
+   node --version     # Should be 18+
+   ```
+
+4. **Review API Docs**: http://localhost:8000/docs
 
 ---
 
