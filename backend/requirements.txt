@@ -3,7 +3,7 @@ fastapi==0.115.0
 uvicorn[standard]==0.32.0
 
 # Database & ORM
-sqlalchemy==2.0.36
+sqlalchemy==2.0.35
 
 # Data Validation & Settings (with better wheel support)
 pydantic==2.9.2
@@ -22,7 +22,7 @@ chromadb==0.4.22
 # AI & LangChain
 langchain==0.3.7
 langchain-community==0.3.7
-langchain-core==0.3.15
+langchain-core==0.3.17
 
 # Embeddings (pinned for stability)
 sentence-transformers==3.2.1
