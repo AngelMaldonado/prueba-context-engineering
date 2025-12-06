@@ -80,7 +80,8 @@ def calculate_profile_completion(profile: MVPUserProfile) -> int:
     """
     Calculate profile completion percentage.
 
-    Considers all key profile fields and returns a percentage (0-100).
+    Considers only fields that are part of the standard onboarding flow.
+    Optional fields (medications, secondary_sports, preferred_training_times) are excluded.
 
     Args:
         profile: MVPUserProfile instance
@@ -91,16 +92,15 @@ def calculate_profile_completion(profile: MVPUserProfile) -> int:
     total_fields = 0
     completed_fields = 0
 
-    # Personal info (4 fields)
+    # Personal info (4 fields - all required in onboarding)
     personal_fields = [profile.age, profile.gender, profile.height_cm, profile.weight_kg]
     total_fields += len(personal_fields)
     completed_fields += sum(1 for f in personal_fields if f is not None)
 
-    # Fitness background (4 fields)
+    # Fitness background (3 fields - secondary_sports is optional)
     fitness_fields = [
         profile.experience_level,
         profile.primary_sport,
-        profile.secondary_sports,
         profile.years_training
     ]
     total_fields += len(fitness_fields)
@@ -111,21 +111,18 @@ def calculate_profile_completion(profile: MVPUserProfile) -> int:
         completed_fields += 1
     total_fields += 1
 
-    # Health info (3 fields - optional but counted)
-    health_fields = [profile.injuries, profile.health_conditions, profile.medications]
-    total_fields += len(health_fields)
-    completed_fields += sum(1 for f in health_fields if f is not None)
+    # Health info is completely optional - not counted in completion
+    # Users without injuries/conditions should reach 100%
 
-    # Availability (3 fields)
+    # Availability (2 fields - preferred_training_times is optional)
     availability_fields = [
         profile.available_days_per_week,
-        profile.preferred_session_duration,
-        profile.preferred_training_times
+        profile.preferred_session_duration
     ]
     total_fields += len(availability_fields)
     completed_fields += sum(1 for f in availability_fields if f is not None)
 
-    # Equipment (3 fields)
+    # Equipment (3 fields - all required in onboarding)
     equipment_fields = [
         profile.has_gym_membership,
         profile.available_equipment,
@@ -160,6 +157,12 @@ def update_profile_from_onboarding(
         Updated MVPUserProfile
     """
     profile = get_or_create_profile(db)
+
+    # Update user's full name if provided
+    if onboarding_data.full_name is not None:
+        user = get_or_create_mvp_user(db)
+        user.full_name = onboarding_data.full_name
+        db.commit()
 
     # Update personal information
     if onboarding_data.age is not None:
@@ -323,7 +326,12 @@ def update_fitness_goals(db: Session, goals: list[str]) -> MVPUserProfile:
 
 def delete_profile(db: Session) -> bool:
     """
-    Delete (reset) the MVP user profile.
+    Delete (reset) the MVP user profile and all associated data.
+
+    Deletes:
+    - User profile
+    - All workout plans
+    - Resets user name
 
     Creates a new empty profile after deletion.
 
@@ -333,11 +341,23 @@ def delete_profile(db: Session) -> bool:
     Returns:
         True if profile was deleted and recreated
     """
-    profile = get_profile(db)
+    from app.models.workout_plan import MVPWorkoutPlan
 
+    # Get user
+    user = get_or_create_mvp_user(db)
+
+    # Delete all workout plans
+    db.query(MVPWorkoutPlan).filter(MVPWorkoutPlan.user_id == user.id).delete()
+
+    # Delete profile
+    profile = get_profile(db)
     if profile:
         db.delete(profile)
-        db.commit()
+
+    # Reset user name
+    user.full_name = "MVP User"
+
+    db.commit()
 
     # Create new empty profile
     get_or_create_profile(db)
