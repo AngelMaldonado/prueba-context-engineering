@@ -4,38 +4,39 @@
  * Multi-step form for collecting user profile data
  */
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { profileApi } from '../lib/api';
-import ErrorMessage from '../components/ErrorMessage';
-import type {
-  OnboardingFormData,
-  OnboardingStep,
-} from '../types';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { profileApi } from "../lib/api";
+import ErrorMessage from "../components/ErrorMessage";
+import type { OnboardingFormData, OnboardingStep } from "../types";
 import {
   EXPERIENCE_LEVEL_OPTIONS,
   FITNESS_GOALS_OPTIONS,
   EQUIPMENT_OPTIONS,
   TRAINING_LOCATION_OPTIONS,
   GENDER_OPTIONS,
-} from '../types';
+} from "../types";
 
 const STEP_CONFIGS = [
-  { step: 1, title: 'Basic Information', description: 'Tell us about yourself' },
+  {
+    step: 1,
+    title: "Basic Information",
+    description: "Tell us about yourself",
+  },
   {
     step: 2,
-    title: 'Experience & Sport',
-    description: 'Your training background',
+    title: "Experience & Sport",
+    description: "Your training background",
   },
   {
     step: 3,
-    title: 'Goals & Limitations',
-    description: 'What you want to achieve',
+    title: "Goals & Limitations",
+    description: "What you want to achieve",
   },
   {
     step: 4,
-    title: 'Availability & Equipment',
-    description: 'Your training setup',
+    title: "Availability & Equipment",
+    description: "Your training setup",
   },
 ];
 
@@ -43,17 +44,17 @@ export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState<OnboardingStep>(1);
   const [formData, setFormData] = useState<OnboardingFormData>({
     // User Info
-    full_name: '',
+    full_name: "",
 
     // Basic Info
     age: 0,
-    gender: 'Male',
+    gender: "Male",
     height_cm: 0,
     weight_kg: 0,
 
     // Experience
-    experience_level: 'beginner',
-    primary_sport: '',
+    experience_level: "beginner",
+    primary_sport: "",
     years_training: 0,
 
     // Goals & Limitations
@@ -64,7 +65,7 @@ export default function OnboardingPage() {
     // Availability
     available_days_per_week: 0,
     preferred_session_duration: 0,
-    training_location: 'home',
+    training_location: "home",
 
     // Equipment
     has_gym_membership: false,
@@ -84,7 +85,7 @@ export default function OnboardingPage() {
       setError(null);
       setCurrentStep((prev) => Math.min(4, prev + 1) as OnboardingStep);
     } else {
-      setError(validation.error || 'Please fill all required fields');
+      setError(validation.error || "Please fill all required fields");
     }
   };
 
@@ -96,7 +97,7 @@ export default function OnboardingPage() {
   const handleSubmit = async () => {
     const validation = validateStep(4);
     if (!validation.isValid) {
-      setError(validation.error || 'Please fill all required fields');
+      setError(validation.error || "Please fill all required fields");
       return;
     }
 
@@ -115,12 +116,12 @@ export default function OnboardingPage() {
           // Skip empty arrays
           return;
         }
-        if (value === '') {
+        if (value === "") {
           // Skip empty strings
           return;
         }
         // Ensure years_training is always an integer
-        if (key === 'years_training' && typeof value === 'number') {
+        if (key === "years_training" && typeof value === "number") {
           cleanedData[key] = Math.floor(value);
         } else {
           cleanedData[key] = value;
@@ -130,14 +131,12 @@ export default function OnboardingPage() {
       await profileApi.submitOnboarding(cleanedData);
 
       // Clear chat history for new user
-      localStorage.removeItem('coachx_chat_history');
+      localStorage.removeItem("coachx_chat_history");
 
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (err: any) {
       setError(
-        err.response?.data?.detail ||
-          err.message ||
-          'Failed to submit profile'
+        err.response?.data?.detail || err.message || "Failed to submit profile"
       );
     } finally {
       setIsSubmitting(false);
@@ -150,28 +149,28 @@ export default function OnboardingPage() {
     switch (step) {
       case 1:
         if (!formData.full_name.trim())
-          return { isValid: false, error: 'Name is required' };
+          return { isValid: false, error: "Name is required" };
         if (formData.age < 13 || formData.age > 100)
-          return { isValid: false, error: 'Age must be between 13 and 100' };
+          return { isValid: false, error: "Age must be between 13 and 100" };
         if (formData.height_cm < 100 || formData.height_cm > 250)
           return {
             isValid: false,
-            error: 'Height must be between 100 and 250 cm',
+            error: "Height must be between 100 and 250 cm",
           };
         if (formData.weight_kg < 30 || formData.weight_kg > 300)
           return {
             isValid: false,
-            error: 'Weight must be between 30 and 300 kg',
+            error: "Weight must be between 30 and 300 kg",
           };
         return { isValid: true };
 
       case 2:
         if (!formData.primary_sport.trim())
-          return { isValid: false, error: 'Primary sport is required' };
+          return { isValid: false, error: "Primary sport is required" };
         if (formData.years_training < 0 || formData.years_training > 50)
           return {
             isValid: false,
-            error: 'Years training must be between 0 and 50',
+            error: "Years training must be between 0 and 50",
           };
         return { isValid: true };
 
@@ -179,7 +178,7 @@ export default function OnboardingPage() {
         if (formData.fitness_goals.length === 0)
           return {
             isValid: false,
-            error: 'Please select at least one fitness goal',
+            error: "Please select at least one fitness goal",
           };
         return { isValid: true };
 
@@ -190,7 +189,7 @@ export default function OnboardingPage() {
         )
           return {
             isValid: false,
-            error: 'Available days must be between 1 and 7',
+            error: "Available days must be between 1 and 7",
           };
         if (
           formData.preferred_session_duration < 15 ||
@@ -198,7 +197,7 @@ export default function OnboardingPage() {
         )
           return {
             isValid: false,
-            error: 'Session duration must be between 15 and 180 minutes',
+            error: "Session duration must be between 15 and 180 minutes",
           };
         if (formData.available_equipment.length === 0)
           return {
@@ -217,6 +216,11 @@ export default function OnboardingPage() {
   return (
     <div className="min-h-screen bg-black py-12 px-4">
       <div className="max-w-2xl mx-auto">
+        {/* Logo */}
+        <div className="flex justify-center mb-8">
+          <img src="/coachx.svg" alt="CoachX Logo" className="h-16 w-auto" />
+        </div>
+
         {/* Progress Indicator */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
@@ -246,14 +250,22 @@ export default function OnboardingPage() {
             </p>
           </div>
 
-          {error && <ErrorMessage error={error} onRetry={() => setError(null)} />}
+          {error && (
+            <ErrorMessage error={error} onRetry={() => setError(null)} />
+          )}
 
           {/* Step Content */}
           {currentStep === 1 && (
-            <Step1BasicInfo formData={formData} updateFormData={updateFormData} />
+            <Step1BasicInfo
+              formData={formData}
+              updateFormData={updateFormData}
+            />
           )}
           {currentStep === 2 && (
-            <Step2Experience formData={formData} updateFormData={updateFormData} />
+            <Step2Experience
+              formData={formData}
+              updateFormData={updateFormData}
+            />
           )}
           {currentStep === 3 && (
             <Step3Goals formData={formData} updateFormData={updateFormData} />
@@ -285,7 +297,7 @@ export default function OnboardingPage() {
                 disabled={isSubmitting}
                 className="btn-primary disabled:opacity-50"
               >
-                {isSubmitting ? 'Submitting...' : 'Complete Onboarding'}
+                {isSubmitting ? "Submitting..." : "Complete Onboarding"}
               </button>
             )}
           </div>
@@ -315,7 +327,7 @@ function Step1BasicInfo({
         <input
           type="text"
           value={formData.full_name}
-          onChange={(e) => updateFormData('full_name', e.target.value)}
+          onChange={(e) => updateFormData("full_name", e.target.value)}
           className="input"
           placeholder="Your full name"
           required
@@ -329,8 +341,8 @@ function Step1BasicInfo({
           </label>
           <input
             type="number"
-            value={formData.age || ''}
-            onChange={(e) => updateFormData('age', Number(e.target.value))}
+            value={formData.age || ""}
+            onChange={(e) => updateFormData("age", Number(e.target.value))}
             min="13"
             max="100"
             className="input"
@@ -344,7 +356,7 @@ function Step1BasicInfo({
           </label>
           <select
             value={formData.gender}
-            onChange={(e) => updateFormData('gender', e.target.value)}
+            onChange={(e) => updateFormData("gender", e.target.value)}
             className="input"
             required
           >
@@ -364,9 +376,9 @@ function Step1BasicInfo({
           </label>
           <input
             type="number"
-            value={formData.height_cm || ''}
+            value={formData.height_cm || ""}
             onChange={(e) =>
-              updateFormData('height_cm', Number(e.target.value))
+              updateFormData("height_cm", Number(e.target.value))
             }
             min="100"
             max="250"
@@ -381,9 +393,9 @@ function Step1BasicInfo({
           </label>
           <input
             type="number"
-            value={formData.weight_kg || ''}
+            value={formData.weight_kg || ""}
             onChange={(e) =>
-              updateFormData('weight_kg', Number(e.target.value))
+              updateFormData("weight_kg", Number(e.target.value))
             }
             min="30"
             max="300"
@@ -416,7 +428,7 @@ function Step2Experience({
         <input
           type="text"
           value={formData.primary_sport}
-          onChange={(e) => updateFormData('primary_sport', e.target.value)}
+          onChange={(e) => updateFormData("primary_sport", e.target.value)}
           className="input"
           placeholder="e.g., Boxing, Running, Weightlifting"
           required
@@ -429,7 +441,7 @@ function Step2Experience({
         </label>
         <select
           value={formData.experience_level}
-          onChange={(e) => updateFormData('experience_level', e.target.value)}
+          onChange={(e) => updateFormData("experience_level", e.target.value)}
           className="input"
           required
         >
@@ -440,7 +452,7 @@ function Step2Experience({
           ))}
         </select>
         <p className="text-xs text-gray-500 mt-1">
-          Beginner: &lt;1 year • Intermediate: 1-3 years • Advanced: 3+ years
+          Beginner: 0-1 year • Intermediate: 1-3 years • Advanced: 3+ years
         </p>
       </div>
 
@@ -450,14 +462,15 @@ function Step2Experience({
         </label>
         <input
           type="number"
-          value={formData.years_training || ''}
+          value={formData.years_training ?? ""}
           onChange={(e) =>
-            updateFormData('years_training', parseInt(e.target.value) || 0)
+            updateFormData("years_training", parseInt(e.target.value) || 0)
           }
           min="0"
           max="50"
           step="1"
           className="input"
+          placeholder="0 for beginners"
           required
         />
       </div>
@@ -480,32 +493,32 @@ function Step3Goals({
     const current = formData.fitness_goals;
     if (current.includes(goal)) {
       updateFormData(
-        'fitness_goals',
+        "fitness_goals",
         current.filter((g) => g !== goal)
       );
     } else {
-      updateFormData('fitness_goals', [...current, goal]);
+      updateFormData("fitness_goals", [...current, goal]);
     }
   };
 
   const addInjury = () => {
-    const injury = prompt('Enter injury description:');
+    const injury = prompt("Enter injury description:");
     if (injury && injury.trim()) {
-      updateFormData('injuries', [...formData.injuries, injury.trim()]);
+      updateFormData("injuries", [...formData.injuries, injury.trim()]);
     }
   };
 
   const removeInjury = (index: number) => {
     updateFormData(
-      'injuries',
+      "injuries",
       formData.injuries.filter((_, i) => i !== index)
     );
   };
 
   const addHealthCondition = () => {
-    const condition = prompt('Enter health condition:');
+    const condition = prompt("Enter health condition:");
     if (condition && condition.trim()) {
-      updateFormData('health_conditions', [
+      updateFormData("health_conditions", [
         ...formData.health_conditions,
         condition.trim(),
       ]);
@@ -514,7 +527,7 @@ function Step3Goals({
 
   const removeHealthCondition = (index: number) => {
     updateFormData(
-      'health_conditions',
+      "health_conditions",
       formData.health_conditions.filter((_, i) => i !== index)
     );
   };
@@ -535,7 +548,9 @@ function Step3Goals({
                 className="mr-2 h-4 w-4 text-primary-600 rounded"
               />
               <span className="text-sm text-gray-700">
-                {goal.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
+                {goal
+                  .replace(/_/g, " ")
+                  .replace(/\b\w/g, (l) => l.toUpperCase())}
               </span>
             </label>
           ))}
@@ -620,11 +635,11 @@ function Step4Availability({
     const current = formData.available_equipment;
     if (current.includes(equipment)) {
       updateFormData(
-        'available_equipment',
+        "available_equipment",
         current.filter((e) => e !== equipment)
       );
     } else {
-      updateFormData('available_equipment', [...current, equipment]);
+      updateFormData("available_equipment", [...current, equipment]);
     }
   };
 
@@ -637,9 +652,9 @@ function Step4Availability({
           </label>
           <input
             type="number"
-            value={formData.available_days_per_week || ''}
+            value={formData.available_days_per_week || ""}
             onChange={(e) =>
-              updateFormData('available_days_per_week', Number(e.target.value))
+              updateFormData("available_days_per_week", Number(e.target.value))
             }
             min="1"
             max="7"
@@ -654,10 +669,10 @@ function Step4Availability({
           </label>
           <input
             type="number"
-            value={formData.preferred_session_duration || ''}
+            value={formData.preferred_session_duration || ""}
             onChange={(e) =>
               updateFormData(
-                'preferred_session_duration',
+                "preferred_session_duration",
                 Number(e.target.value)
               )
             }
@@ -676,7 +691,7 @@ function Step4Availability({
         </label>
         <select
           value={formData.training_location}
-          onChange={(e) => updateFormData('training_location', e.target.value)}
+          onChange={(e) => updateFormData("training_location", e.target.value)}
           className="input"
           required
         >
@@ -694,7 +709,7 @@ function Step4Availability({
             type="checkbox"
             checked={formData.has_gym_membership}
             onChange={(e) =>
-              updateFormData('has_gym_membership', e.target.checked)
+              updateFormData("has_gym_membership", e.target.checked)
             }
             className="mr-2 h-4 w-4 text-primary-600 rounded"
           />
@@ -718,9 +733,9 @@ function Step4Availability({
                 className="mr-2 h-4 w-4 text-primary-600 rounded"
               />
               <span className="text-sm text-gray-700">
-                {equipment.replace(/_/g, ' ').replace(/\b\w/g, (l) =>
-                  l.toUpperCase()
-                )}
+                {equipment
+                  .replace(/_/g, " ")
+                  .replace(/\b\w/g, (l) => l.toUpperCase())}
               </span>
             </label>
           ))}
