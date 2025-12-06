@@ -43,10 +43,17 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str = ""
     GEMINI_MODEL: str = "models/gemini-2.5-flash"
 
+    # RAG - ChromaDB
+    CHROMA_PERSIST_DIRECTORY: str = "./chroma_db"
+
+    # Additional CORS origins (can be overridden in .env)
+    ALLOWED_ORIGINS: str = ""
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
-        case_sensitive=True
+        case_sensitive=True,
+        extra="ignore"  # Allow extra fields in .env without validation errors
     )
 
 
