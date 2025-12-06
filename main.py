@@ -294,38 +294,31 @@ def setup_backend() -> Path:
         print_warning(f"Failed to upgrade pip: {e}")
         print_warning("Continuing with existing pip version...")
 
-    # Step 2: Pre-install numpy on Windows Python 3.13+ (no wheels available otherwise)
-    if IS_WINDOWS and sys.version_info >= (3, 13):
-        print_info("Python 3.13 detected on Windows - pre-installing numpy...")
-        numpy_cmd = [
-            pip_cmd,
-            "install",
-            "numpy>=2.0.0",  # numpy 2.0+ has wheels for Python 3.13
-            "--no-cache-dir",
-        ]
-        try:
-            run_command(numpy_cmd, cwd=backend_dir)
-            print_success("numpy pre-installed successfully")
-        except Exception as e:
-            print_error("Failed to install numpy. This Python version may not be supported.")
-            print_info("Please use Python 3.11 or 3.12 for best compatibility")
-            sys.exit(1)
-
-    # Step 3: Install remaining dependencies
+    # Step 2: Install dependencies
     print_info("Installing project dependencies...")
+
+    # Try without strict binary requirement first
     install_cmd = [
         pip_cmd,
         "install",
         "-r", "requirements.txt",
-        "--no-cache-dir",  # Avoid cache issues across platforms
     ]
 
-    # On Windows, prefer binary wheels but allow compilation if needed
-    if IS_WINDOWS:
-        install_cmd.append("--prefer-binary")
-
-    run_command(install_cmd, cwd=backend_dir)
-    print_success("Backend dependencies installed")
+    try:
+        run_command(install_cmd, cwd=backend_dir)
+        print_success("Backend dependencies installed")
+    except Exception:
+        print_error("\nInstallation failed. This usually means:")
+        print_error("  - You're using Python 3.13 on Windows (not fully supported yet)")
+        print_error("  - Missing C++ compiler for building dependencies\n")
+        print_info("SOLUTION: Use Python 3.11 or 3.12 for best compatibility")
+        print_info("  - Python 3.11.9: https://www.python.org/downloads/release/python-3119/")
+        print_info("  - Python 3.12.7: https://www.python.org/downloads/release/python-3127/")
+        print_info("\nSteps:")
+        print_info("  1. Install Python 3.11 or 3.12")
+        print_info("  2. Delete backend/venv folder")
+        print_info("  3. Run 'python main.py' again")
+        sys.exit(1)
 
     return python_path
 
