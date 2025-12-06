@@ -294,7 +294,24 @@ def setup_backend() -> Path:
         print_warning(f"Failed to upgrade pip: {e}")
         print_warning("Continuing with existing pip version...")
 
-    # Step 2: Install dependencies with additional flags for reliability
+    # Step 2: Pre-install numpy on Windows Python 3.13+ (no wheels available otherwise)
+    if IS_WINDOWS and sys.version_info >= (3, 13):
+        print_info("Python 3.13 detected on Windows - pre-installing numpy...")
+        numpy_cmd = [
+            pip_cmd,
+            "install",
+            "numpy>=2.0.0",  # numpy 2.0+ has wheels for Python 3.13
+            "--no-cache-dir",
+        ]
+        try:
+            run_command(numpy_cmd, cwd=backend_dir)
+            print_success("numpy pre-installed successfully")
+        except Exception as e:
+            print_error("Failed to install numpy. This Python version may not be supported.")
+            print_info("Please use Python 3.11 or 3.12 for best compatibility")
+            sys.exit(1)
+
+    # Step 3: Install remaining dependencies
     print_info("Installing project dependencies...")
     install_cmd = [
         pip_cmd,
