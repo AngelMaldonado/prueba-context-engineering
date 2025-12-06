@@ -301,24 +301,14 @@ def setup_backend() -> Path:
         "install",
         "-r", "requirements.txt",
         "--no-cache-dir",  # Avoid cache issues across platforms
-        "--only-binary", ":all:",  # Force use of pre-built wheels only (no compilation)
     ]
 
-    try:
-        run_command(install_cmd, cwd=backend_dir)
-        print_success("Backend dependencies installed")
-    except Exception as e:
-        print_warning("Installation with --only-binary failed, retrying without it...")
-        print_info("This may require compilers on your system (MSVC on Windows)")
-        # Retry without --only-binary flag
-        retry_cmd = [
-            pip_cmd,
-            "install",
-            "-r", "requirements.txt",
-            "--no-cache-dir",
-        ]
-        run_command(retry_cmd, cwd=backend_dir)
-        print_success("Backend dependencies installed (with compilation)")
+    # On Windows, prefer binary wheels but allow compilation if needed
+    if IS_WINDOWS:
+        install_cmd.append("--prefer-binary")
+
+    run_command(install_cmd, cwd=backend_dir)
+    print_success("Backend dependencies installed")
 
     return python_path
 
