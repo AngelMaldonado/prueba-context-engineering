@@ -82,6 +82,30 @@ export default function DashboardPage() {
     }
   };
 
+  const handleResetProfile = async () => {
+    if (!confirm("Are you sure you want to reset your profile? This will delete all your data including workout plans and chat history.")) {
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      await profileApi.resetProfile();
+      // Clear localStorage
+      localStorage.removeItem("coachx_chat_history");
+      // Redirect to home page
+      navigate("/");
+    } catch (err: any) {
+      setError(
+        err.response?.data?.detail ||
+          err.message ||
+          "Failed to reset profile"
+      );
+      setIsLoading(false);
+    }
+  };
+
   if (isLoading) {
     return <LoadingSpinner size="lg" message="Loading your dashboard..." />;
   }
@@ -105,22 +129,34 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-black py-4 px-4">
       <div className="max-w-7xl mx-auto">
-        {/* Compact Header */}
+        {/* Logo and Header */}
         <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-white">
-              {profile.full_name} - {profile.primary_sport}
-            </h1>
-            <p className="text-sm text-gray-400 mt-1">
-              {profile.available_days_per_week} days/week
-            </p>
+          <div className="flex items-center gap-4">
+            <img src="/coachx.svg" alt="CoachX Logo" className="h-12 w-auto" />
+            <div>
+              <h1 className="text-2xl font-bold text-white">
+                {profile.full_name} - {profile.primary_sport}
+              </h1>
+              <p className="text-sm text-gray-400 mt-1">
+                {profile.available_days_per_week} days/week
+              </p>
+            </div>
           </div>
-          <button
-            onClick={() => setShowGenerateModal(true)}
-            className="btn-primary mt-3 md:mt-0"
-          >
-            Generate Workout Plan
-          </button>
+          <div className="flex gap-2 mt-3 md:mt-0">
+            <button
+              onClick={() => setShowGenerateModal(true)}
+              className="btn-primary"
+            >
+              Generate Workout Plan
+            </button>
+            <button
+              onClick={handleResetProfile}
+              className="px-4 py-2 bg-gray-800 text-gray-300 rounded hover:bg-gray-700 text-sm"
+              title="Reset profile and start over"
+            >
+              Reset
+            </button>
+          </div>
         </div>
 
         {error && <ErrorMessage error={error} onRetry={loadDashboardData} />}
@@ -503,11 +539,11 @@ function GeneratePlanModal({
                     })
                   }
                   min="1"
-                  max="12"
+                  max="2"
                   className="input"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Between 1 and 12 weeks
+                  Between 1 and 2 weeks
                 </p>
               </div>
 
