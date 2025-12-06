@@ -1,0 +1,25 @@
+# Virtual environment
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Database
+*.db
+coachx.db
+
+# ChromaDB
+chroma_db/
+
+# Environment
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Testing
+.pytest_cache/
+htmlcov/
+.coverage

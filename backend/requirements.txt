@@ -1,0 +1,39 @@
+# Core Web Framework
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+
+# Database & ORM
+sqlalchemy==2.0.35
+
+# Data Validation & Settings (with better wheel support)
+pydantic==2.9.2
+pydantic-settings==2.6.1
+python-dotenv==1.0.1
+
+# Testing
+pytest==8.3.3
+pytest-asyncio==0.24.0
+httpx==0.27.2
+
+# Vector Database - using stable version with guaranteed pre-built wheels
+# Version 0.4.22 has wheels for all platforms and doesn't require compilation
+chromadb==0.4.22
+
+# AI & LangChain
+langchain==0.3.7
+langchain-community==0.3.7
+langchain-core==0.3.17
+
+# Embeddings (pinned for stability)
+sentence-transformers==3.2.1
+
+# Google Gemini API
+google-generativeai==0.8.3
+
+# Additional dependencies for cross-platform compatibility
+typing-extensions>=4.12.0
+
+# IMPORTANT: numpy is NOT explicitly listed here because:
+# - chromadb and sentence-transformers install compatible numpy versions
+# - Explicitly pinning numpy causes compilation issues on Windows
+# - Let the dependencies handle numpy installation automatically

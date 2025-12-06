@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom base styles - BRED Theme (Black + Red) */
+@layer base {
+  body {
+    @apply bg-black text-white;
+  }
+}
+
+/* Custom component styles - BRED Theme */
+@layer components {
+  .btn-primary {
+    @apply bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200;
+  }
+
+  .card {
+    @apply bg-gray-900 border border-gray-800 rounded-lg shadow-xl p-6;
+  }
+
+  .input {
+    @apply w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600 outline-none transition-all;
+  }
+}
+
+/* Chat animations */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.user-message {
+  animation: slideInRight 0.3s ease-out;
+}
+
+.ai-message {
+  animation: slideInLeft 0.3s ease-out;
+}
+
+/* Custom red scrollbar for chat */
+.messages-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+  background: #000000;
+  border-radius: 4px;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+  background: #DC2626;
+  border-radius: 4px;
+}
+
+.messages-container::-webkit-scrollbar-thumb:hover {
+  background: #B91C1C;
+}
+
+/* Firefox scrollbar */
+.messages-container {
+  scrollbar-width: thin;
+  scrollbar-color: #DC2626 #000000;
+}
+
+/* Smooth button hover effects */
+.send-button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.send-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px -10px rgba(220, 38, 38, 0.5);
+}
+
+.send-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Input focus glow */
+.chat-input:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+/* Pulse animation for loading */
+@keyframes pulse-red {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Smooth transitions for all interactive elements */
+button, input, a {
+  transition: all 0.2s ease-in-out;
+}

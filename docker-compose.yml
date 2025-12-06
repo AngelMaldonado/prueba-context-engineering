@@ -1,0 +1,28 @@
+services:
+  backend:
+    build: ./backend
+    container_name: coachx-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - DATABASE_URL=sqlite:///./coachx.db
+      - CHROMA_PERSIST_DIRECTORY=./chroma_db
+      - ALLOWED_ORIGINS=http://localhost:5173
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: coachx-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    restart: unless-stopped
